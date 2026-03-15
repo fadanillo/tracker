@@ -511,11 +511,11 @@ var fbRef = null;
 var fbReady = false;
 var syncTimeout = null;
 
-function initFirebase() {
+function initFirebase(onReady) {
   try {
     if (FIREBASE_CONFIG.apiKey === 'PASTE_YOUR_apiKey_HERE') {
       showSyncStatus('local', 'Локально');
-      return;
+      onReady(); return;
     }
     firebase.initializeApp(FIREBASE_CONFIG);
     fbDb = firebase.database();
@@ -524,7 +524,6 @@ function initFirebase() {
     var hasLocal = !!localStorage.getItem('g26v3');
 
     if (!hasLocal) {
-      // No local data — try to load from Firebase
       showSyncStatus('saving', 'Завантаження...');
       fbRef.once('value', function(snapshot) {
         var remote = snapshot.val();
@@ -534,27 +533,27 @@ function initFirebase() {
             if (!S.weight.cal) S.weight.cal = {};
             if (!S.global) S.global = defaultState().global;
             localStorage.setItem('g26v3', JSON.stringify(S));
-            renderAll();
             showSyncStatus('synced', 'Завантажено ✓');
           } catch(e) { showSyncStatus('local', 'Локально'); }
         } else {
-          showSyncStatus('synced', 'Збережено ✓');
+          showSyncStatus('synced', '✓');
         }
         fbReady = true;
+        onReady();
       }, function() {
         showSyncStatus('local', 'Помилка Firebase');
         fbReady = true;
+        onReady();
       });
     } else {
-      // Has local data — just mark ready, push to Firebase in background
       fbReady = true;
       showSyncStatus('synced', '✓');
-      // Push local to Firebase silently
       fbRef.set(JSON.parse(JSON.stringify(S)));
+      onReady();
     }
-
   } catch(e) {
     showSyncStatus('local', 'Локально');
+    onReady();
   }
 }
 
@@ -596,7 +595,6 @@ function renderAll() {
 }
 
 loadState();
-initFirebase();
 
 // Date header
 var mns = ['січня','лютого','березня','квітня','травня','червня','липня','серпня','вересня','жовтня','листопада','грудня'];
@@ -1566,8 +1564,11 @@ function renderDashIfOpen() {
 }
 
 // ===== INIT =====
-renderAll();
-renderDash();
+loadState();
+initFirebase(function() {
+  renderAll();
+  renderDash();
+});
 </script>
 </body>
 </html>
