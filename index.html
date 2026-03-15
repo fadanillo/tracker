@@ -1,0 +1,1573 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Мої цілі 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<!-- ======================================================
+     FIREBASE CONFIG — встав свої дані сюди
+     ====================================================== -->
+<script>
+var FIREBASE_CONFIG = {
+  apiKey:            "AIzaSyB5VqyVAcNARnFjC8FXdjSx_9dLDVpuRao",
+  authDomain:        "matarot-ab0a6.firebaseapp.com",
+  databaseURL:       "https://matarot-ab0a6-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:         "matarot-ab0a6",
+  storageBucket:     "matarot-ab0a6.firebasestorage.app",
+  messagingSenderId: "107641703547",
+  appId:             "1:107641703547:web:1e3d4beb579ec96802e6de"
+};
+// User ID — can be any string, just keep it the same on all devices
+var FB_USER = "user1";
+</script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<!-- ====================================================== -->
+<style>
+:root {
+  --bg:#0d0d0d; --s1:#141414; --s2:#1c1c1c; --s3:#242424;
+  --b:#2e2e2e; --b2:#3a3a3a;
+  --text:#f0f0f0; --muted:#666;
+  --gym:#ff6b35; --bench:#ff9f1c; --money:#2ec4b6;
+  --books:#f7b731; --weight:#26de81; --english:#45aaf2;
+  --dates:#fd79a8; --steps:#55efc4; --pentest:#e17055;
+  --global:#a29bfe; --r:12px;
+  --red:#ff5252; --yellow:#ffd32a; --green:#26de81;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;padding-bottom:80px;}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -20%,rgba(255,107,53,.06),transparent);pointer-events:none;z-index:0;}
+.app{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:22px 14px;}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid var(--b);}
+.logo{font-family:'Syne',sans-serif;font-size:21px;font-weight:800;letter-spacing:-1px;}
+.logo em{color:var(--gym);font-style:normal;}
+.hdr-date{font-family:'Syne',sans-serif;background:var(--s2);border:1px solid var(--b);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;color:var(--muted);}
+.nav{display:flex;gap:3px;background:var(--s1);padding:4px;border-radius:var(--r);border:1px solid var(--b);margin-bottom:22px;overflow-x:auto;}
+.nav::-webkit-scrollbar{display:none;}
+.ntab{flex-shrink:0;padding:8px 13px;border-radius:9px;border:none;background:none;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;white-space:nowrap;}
+.ntab.on{background:var(--s3);color:var(--text);}
+.ntab:hover:not(.on){color:var(--text);}
+.sec{display:none;}.sec.on{display:block;}
+.stitle{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:12px;}
+.card{background:var(--s1);border:1px solid var(--b);border-radius:var(--r);padding:18px 20px;margin-bottom:12px;}
+.card-head{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.ci{font-size:22px;width:38px;text-align:center;flex-shrink:0;}
+.ct{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;}
+.cs{font-size:12px;color:var(--muted);margin-top:1px;}
+.cr{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.pbar{height:5px;background:var(--s3);border-radius:3px;overflow:hidden;margin-top:8px;}
+.pbar.h8{height:8px;}
+.pfill{height:100%;border-radius:3px;transition:width .4s ease;}
+.bnum{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;line-height:1;}
+.bunit{font-size:14px;color:var(--muted);}
+.wlbl{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:3px;}
+.wl{text-align:center;font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;}
+.wgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.db{aspect-ratio:1;border-radius:7px;border:1.5px solid var(--b);background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;transition:all .15s;font-family:'DM Sans',sans-serif;}
+.db.tgt{border-color:var(--b2);}
+.db.done{border-color:transparent;}
+.db.fut{opacity:.28;pointer-events:none;}
+.db .ck{display:none;font-size:13px;}
+.db.done .ck{display:block;}
+.db .dn{font-size:10px;color:var(--muted);}
+.db.done .dn{display:none;}
+.mgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.mc{aspect-ratio:1;border-radius:6px;border:1px solid var(--b);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--muted);transition:all .15s;font-family:'DM Sans',sans-serif;}
+.mc.done{border-color:transparent;}
+.mc.fut{opacity:.22;pointer-events:none;}
+.mc.tod{border-color:var(--b2);color:var(--text);font-weight:700;}
+.inp{flex:1;min-width:80px;padding:9px 12px;background:var(--bg);border:1px solid var(--b);border-radius:9px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;}
+.inp:focus{outline:none;border-color:var(--b2);}
+.inp::placeholder{color:var(--muted);}
+.inprow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px;}
+.sm{max-width:95px;}
+.btn{padding:9px 15px;border:none;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:opacity .2s;white-space:nowrap;}
+.btn:hover{opacity:.85;}
+.gbtn{background:var(--s2);border:1px solid var(--b);color:var(--text);padding:8px 12px;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:all .2s;}
+.gbtn:hover{border-color:var(--b2);}
+.loglist{margin-top:10px;display:flex;flex-direction:column;gap:5px;}
+.li{display:flex;align-items:center;gap:10px;background:var(--s2);border-radius:8px;padding:8px 12px;font-size:13px;}
+.ld{color:var(--muted);font-size:11px;min-width:65px;}
+.lv{font-weight:600;}
+.ln{color:var(--muted);flex:1;font-size:12px;}
+.dx{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:0 2px;line-height:1;}
+.dx:hover{color:#ff5252;}
+.badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;background:var(--s2);border:1px solid var(--b);}
+.hr{border:none;border-top:1px solid var(--b);margin:18px 0;}
+/* dashboard */
+#dash-wrap{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start;margin-bottom:20px;}
+.dleg{flex:1;min-width:180px;display:flex;flex-direction:column;gap:6px;}
+.dleg-item{display:flex;align-items:center;gap:8px;font-size:13px;}
+.dleg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.dleg-name{flex:1;color:var(--muted);}
+.dleg-pct{font-weight:700;font-family:'Syne',sans-serif;font-size:13px;}
+/* week quality */
+.wqgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:14px;}
+.wqday{background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:9px 4px;text-align:center;}
+.wqdn{font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;margin-bottom:5px;}
+.wqsc{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;margin-bottom:3px;}
+.wqbar{height:2px;border-radius:1px;margin-bottom:5px;opacity:.4;}
+.wqitems{display:flex;flex-direction:column;gap:2px;}
+.wqit{font-size:9px;display:flex;align-items:center;gap:2px;justify-content:center;}
+.wqdot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+/* cal buttons */
+.calbtns{display:flex;gap:8px;margin-top:10px;}
+.calbtn{flex:1;padding:12px 6px;border:2px solid var(--b);border-radius:10px;background:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.calbtn:hover{border-color:var(--b2);}
+.calbtn.sr{border-color:var(--red);background:rgba(255,82,82,.1);}
+.calbtn.sy{border-color:var(--yellow);background:rgba(255,211,42,.1);}
+.calbtn.sg{border-color:var(--green);background:rgba(38,222,129,.1);}
+/* steps */
+.stoggle{display:flex;gap:10px;margin-top:10px;}
+.stbtn{flex:1;padding:14px;border:2px solid var(--b);border-radius:10px;background:none;cursor:pointer;font-family:'Syne',sans-serif;font-size:15px;font-weight:800;transition:all .2s;color:var(--muted);}
+.stbtn.sy{border-color:var(--steps);background:rgba(85,239,196,.1);color:var(--steps);}
+.stbtn.sn{border-color:var(--red);background:rgba(255,82,82,.1);color:var(--red);}
+.stbtn:hover:not(.sy):not(.sn){border-color:var(--b2);color:var(--text);}
+/* week summary */
+.wsr{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--s2);border-radius:9px;}
+.wsr-icon{font-size:16px;width:24px;text-align:center;}
+.wsr-name{flex:1;font-size:13px;font-weight:600;}
+.wsr-val{font-size:13px;font-weight:700;}
+.wsr-bar-wrap{width:80px;height:5px;background:var(--s3);border-radius:3px;overflow:hidden;}
+.wsr-bar{height:100%;border-radius:3px;}
+/* today checklist */
+.chk-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;background:var(--s2);cursor:pointer;transition:all .2s;border:1.5px solid transparent;user-select:none;}
+.chk-item:hover{border-color:var(--b2);}
+.chk-item.done-item{border-color:transparent;}
+.chk-box{width:26px;height:26px;border-radius:7px;border:2px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .2s;flex-shrink:0;}
+.chk-item.done-item .chk-box{border-color:transparent;}
+.chk-label{flex:1;font-weight:600;font-size:14px;}
+.chk-sub{font-size:12px;color:var(--muted);}
+.chk-item.skip{opacity:.35;pointer-events:none;}
+/* period tabs */
+.ptab{flex:1;padding:9px;border-radius:9px;border:none;background:none;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;}
+.ptab.on{background:var(--s3);color:var(--text);}
+.ptab:hover:not(.on){color:var(--text);}
+/* period stat cards */
+.pstat{background:var(--s2);border:1px solid var(--b);border-radius:var(--r);padding:14px 16px;}
+.pstat-val{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;line-height:1;margin-bottom:3px;}
+.pstat-lbl{font-size:11px;color:var(--muted);}
+/* global */
+.gitem{background:var(--s1);border:1px solid var(--b);border-radius:var(--r);padding:14px 18px;margin-bottom:8px;display:flex;align-items:center;gap:14px;transition:all .2s;cursor:pointer;}
+.gitem:hover{border-color:var(--b2);}
+.gitem.gdone{opacity:.6;border-color:var(--money);}
+.gicon{font-size:24px;flex-shrink:0;}
+.gname{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;flex:1;}
+.gname.gx{text-decoration:line-through;color:var(--muted);}
+.gchk{width:32px;height:32px;border:2px solid var(--b);border-radius:9px;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s;flex-shrink:0;}
+.gchk.gd{background:var(--money);border-color:var(--money);color:#000;}
+@media(max-width:600px){.wqsc{font-size:14px;}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="logo">цілі<em>.</em>2026</div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div id="sync-status" style="font-size:11px;color:var(--muted)">...</div>
+    <div class="hdr-date" id="hdr"></div>
+  </div>
+</header>
+<div class="nav">
+  <button class="ntab on"  onclick="tab('dash')">📊 Дашборд</button>
+  <button class="ntab"     onclick="tab('week')">⭐ Тиждень</button>
+  <button class="ntab"     onclick="tab('gym')">🏋️ Зал</button>
+  <button class="ntab"     onclick="tab('bench')">🏆 Жим</button>
+  <button class="ntab"     onclick="tab('money')">💳 Фінанси</button>
+  <button class="ntab"     onclick="tab('weight')">⚖️ Вага</button>
+  <button class="ntab"     onclick="tab('books')">📚 Книги</button>
+  <button class="ntab"     onclick="tab('steps')">🦵 Кроки</button>
+  <button class="ntab"     onclick="tab('pentest')">🛡️ Пентест</button>
+  <button class="ntab"     onclick="tab('english')">🇬🇧 Англійська</button>
+  <button class="ntab"     onclick="tab('dates')">💕 Побачення</button>
+  <button class="ntab"     onclick="tab('global')">🌍 Глобальні</button>
+</div>
+
+<!-- DASHBOARD -->
+<div class="sec on" id="sec-dash">
+
+  <!-- WEEK SUMMARY - shown on Saturdays -->
+  <div class="card" id="week-summary-card" style="display:none;margin-bottom:14px;border-color:var(--b2);">
+    <div class="card-head" style="margin-bottom:12px;">
+      <div class="ci">🏁</div>
+      <div><div class="ct">Підсумок тижня</div><div class="cs" id="wsum-dates"></div></div>
+      <div class="cr"><div id="wsum-score" style="font-family:'Syne',sans-serif;font-weight:800;font-size:20px;"></div></div>
+    </div>
+    <div class="pbar h8" style="margin-bottom:14px;"><div class="pfill" id="wsum-pbar" style="background:var(--green);width:0%"></div></div>
+    <div id="wsum-rows" style="display:flex;flex-direction:column;gap:5px;"></div>
+  </div>
+
+  <!-- TODAY CHECKLIST -->
+  <div class="card" style="margin-bottom:14px;">
+    <div class="card-head" style="margin-bottom:10px;">
+      <div class="ci">✅</div>
+      <div><div class="ct">Сьогодні</div><div class="cs" id="today-date-lbl"></div></div>
+      <div class="cr"><div id="today-score" style="font-family:'Syne',sans-serif;font-weight:800;font-size:18px;">0%</div></div>
+    </div>
+    <div class="pbar h8" style="margin-bottom:14px;"><div class="pfill" id="today-pbar" style="background:var(--green);width:0%"></div></div>
+    <div id="today-checklist" style="display:flex;flex-direction:column;gap:6px;"></div>
+  </div>
+
+  <!-- Period tabs -->
+  <div style="display:flex;gap:4px;background:var(--s1);padding:4px;border-radius:var(--r);border:1px solid var(--b);margin-bottom:14px;">
+    <button class="ptab on" id="pt-day"   onclick="setPeriod('day')"  >📅 День</button>
+    <button class="ptab"    id="pt-week"  onclick="setPeriod('week')" >📆 Тиждень</button>
+    <button class="ptab"    id="pt-month" onclick="setPeriod('month')">🗓 Місяць</button>
+  </div>
+
+  <!-- Period summary -->
+  <div id="dash-period-summary" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;"></div>
+
+  <!-- Radial chart + legend -->
+  <div class="card">
+    <div class="card-head"><div class="ci">📊</div><div><div class="ct">Прогрес цілей 2026</div><div class="cs" id="dash-subtitle">% виконання кожної цілі</div></div></div>
+    <div id="dash-wrap">
+      <canvas id="dash-canvas" width="250" height="250" style="flex-shrink:0"></canvas>
+      <div class="dleg" id="dash-leg"></div>
+    </div>
+  </div>
+
+  <!-- Global goals inline -->
+  <div class="card">
+    <div class="card-head"><div class="ci">🌍</div><div><div class="ct">Глобальні цілі</div><div class="cs">Натисни щоб відмітити</div></div></div>
+    <div id="dash-global"></div>
+  </div>
+</div>
+
+<!-- WEEK QUALITY -->
+<div class="sec" id="sec-week">
+  <div class="card">
+    <div class="card-head"><div class="ci">⭐</div><div><div class="ct">Якість тижня</div><div class="cs">Зал · Кроки · Калорії · Читання · Пентест · Англійська</div></div></div>
+    <div class="wqgrid" id="wq-grid"></div>
+    <div style="font-size:11px;color:var(--muted)">🏋️ Зал &nbsp;·&nbsp; 🦵 Кроки &nbsp;·&nbsp; 🍏 Кал &nbsp;·&nbsp; 📚 Читання &nbsp;·&nbsp; 🛡️ Пентест &nbsp;·&nbsp; 🇬🇧 Англ</div>
+  </div>
+  <div class="card">
+    <div class="stitle" style="margin-bottom:10px">Минулі тижні</div>
+    <div id="wq-hist"></div>
+  </div>
+</div>
+
+<!-- GYM -->
+<div class="sec" id="sec-gym">
+  <div class="card">
+    <div class="card-head"><div class="ci">🏋️</div><div><div class="ct">Зал — ціль 100 разів</div><div class="cs">Пн / Ср / Пт / Сб</div></div><div class="cr"><span class="badge" id="gym-badge">0/100</span></div></div>
+    <div style="display:flex;align-items:baseline;gap:8px;">
+      <div class="bnum" id="gym-big" style="color:var(--gym)">0</div>
+      <span class="bunit">/ 100 візитів</span>
+      <span style="margin-left:auto;font-size:12px" id="gym-trk"></span>
+    </div>
+    <div class="pbar"><div class="pfill" id="gym-pb" style="background:var(--gym);width:0%"></div></div>
+    <div style="margin-top:16px;"><div class="stitle">Цей тиждень</div>
+      <div class="wlbl"><div class="wl">Нд</div><div class="wl">Пн</div><div class="wl">Вт</div><div class="wl">Ср</div><div class="wl">Чт</div><div class="wl">Пт</div><div class="wl">Сб</div></div>
+      <div class="wgrid" id="gym-wk"></div>
+    </div>
+    <div style="margin-top:14px;"><div class="stitle">Цей місяць</div><div class="mgrid" id="gym-mo"></div></div>
+  </div>
+</div>
+
+<!-- BENCH -->
+<div class="sec" id="sec-bench">
+  <div class="card">
+    <div class="card-head"><div class="ci">🏆</div><div><div class="ct">Жим лежачи — ціль 100 кг</div><div class="cs">1RM та повний підхід</div></div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+      <div style="background:var(--s2);border-radius:10px;padding:14px;">
+        <div style="font-size:10px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Рекорд 1RM</div>
+        <div class="bnum" id="b1rm" style="color:var(--bench)">—</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:3px" id="b1rm-d"></div>
+      </div>
+      <div style="background:var(--s2);border-radius:10px;padding:14px;">
+        <div style="font-size:10px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Останній підхід</div>
+        <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--bench)" id="bset">—</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:3px" id="bset-d"></div>
+      </div>
+    </div>
+    <div class="pbar"><div class="pfill" id="bench-pb" style="background:var(--bench);width:0%"></div></div>
+    <div style="font-size:12px;color:var(--muted);margin-top:5px" id="bench-pct"></div>
+    <div class="hr"></div>
+    <div class="stitle">Додати запис</div>
+    <div class="inprow">
+      <select class="inp" id="btype" style="max-width:130px"><option value="1rm">1 раз (1RM)</option><option value="set">Підхід</option></select>
+      <input class="inp sm" id="bkg" type="number" placeholder="кг" style="max-width:80px">
+      <input class="inp sm" id="breps" type="number" placeholder="повт" style="max-width:75px">
+      <button class="btn" onclick="addBench()" style="background:var(--bench);color:#000">Зберегти</button>
+    </div>
+    <div class="loglist" id="bench-log"></div>
+  </div>
+</div>
+
+<!-- MONEY -->
+<div class="sec" id="sec-money">
+  <div class="card">
+    <div class="card-head"><div class="ci">💳</div><div><div class="ct">Банківський рахунок</div><div class="cs">Ціль: бути в плюсі. Фіксуй щомісяця.</div></div></div>
+    <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px;">
+      <div class="bnum" id="money-now" style="color:var(--money)">—</div><span class="bunit">грн</span>
+    </div>
+    <div style="font-size:13px;" id="money-trn"></div>
+    <div class="hr"></div>
+    <div class="inprow">
+      <input class="inp" id="money-v" type="number" placeholder="Баланс (грн)">
+      <input class="inp" id="money-n" placeholder="Коментар">
+      <button class="btn" onclick="addMoney()" style="background:var(--money);color:#000">Зафіксувати</button>
+    </div>
+    <div class="loglist" id="money-log"></div>
+  </div>
+</div>
+
+<!-- WEIGHT -->
+<div class="sec" id="sec-weight">
+  <div class="card">
+    <div class="card-head"><div class="ci">⚖️</div><div><div class="ct">Вага — ціль 80 кг</div><div class="cs">Фіксуй вагу + калорії ≥2600 щодня</div></div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+      <div style="background:var(--s2);border-radius:10px;padding:14px;">
+        <div style="font-size:10px;color:var(--muted);margin-bottom:4px;text-transform:uppercase">Поточна вага</div>
+        <div class="bnum" id="w-now" style="color:var(--weight)">—</div>
+        <div style="font-size:11px;color:var(--muted)">кг</div>
+      </div>
+      <div style="background:var(--s2);border-radius:10px;padding:14px;">
+        <div style="font-size:10px;color:var(--muted);margin-bottom:4px;text-transform:uppercase">До цілі</div>
+        <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--weight)" id="w-diff">—</div>
+        <div style="font-size:11px;color:var(--muted)">кг залишилось</div>
+      </div>
+    </div>
+    <div class="hr"></div>
+    <div class="stitle">Калорії сьогодні</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px">🔴 менше 2400 · 🟡 2400–2600 · 🟢 2600+</div>
+    <div class="calbtns">
+      <button class="calbtn" id="cal-r" onclick="setCal('r')">
+        <span style="font-size:18px">🔴</span>
+        <span style="font-weight:700;color:var(--red)">&lt;2400</span>
+        <span style="font-size:10px;color:var(--muted)">Не виконано</span>
+      </button>
+      <button class="calbtn" id="cal-y" onclick="setCal('y')">
+        <span style="font-size:18px">🟡</span>
+        <span style="font-weight:700;color:var(--yellow)">2400–2600</span>
+        <span style="font-size:10px;color:var(--muted)">Нормально</span>
+      </button>
+      <button class="calbtn" id="cal-g" onclick="setCal('g')">
+        <span style="font-size:18px">🟢</span>
+        <span style="font-weight:700;color:var(--green)">2600+</span>
+        <span style="font-size:10px;color:var(--muted)">Відмінно!</span>
+      </button>
+    </div>
+    <div style="margin-top:8px;font-size:13px;color:var(--muted)" id="cal-st"></div>
+    <div class="hr"></div>
+    <div class="stitle">Записати вагу</div>
+    <div class="inprow">
+      <input class="inp" id="w-val" type="number" step="0.1" placeholder="Вага (кг)">
+      <button class="btn" onclick="addWeight()" style="background:var(--weight);color:#000">Зафіксувати</button>
+    </div>
+    <div class="loglist" id="w-log"></div>
+  </div>
+</div>
+
+<!-- BOOKS -->
+<div class="sec" id="sec-books">
+  <div class="card">
+    <div class="card-head"><div class="ci">📚</div><div><div class="ct">6 книг за рік</div><div class="cs">20 сторінок щодня</div></div><div class="cr"><span class="badge" id="bk-badge" style="color:var(--books)">0/6</span></div></div>
+    <div class="stitle">Читання сьогодні</div>
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;">
+      <div><div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--books)" id="pg-today">0</div><div style="font-size:10px;color:var(--muted)">/ 20 стор</div></div>
+      <div style="flex:1"><div class="pbar h8"><div class="pfill" id="pg-bar" style="background:var(--books);width:0%"></div></div></div>
+    </div>
+    <div class="inprow" style="margin-bottom:12px;">
+      <input class="inp" id="pg-add" type="number" placeholder="Сторінок сьогодні">
+      <button class="btn" onclick="addPages()" style="background:var(--books);color:#000">Записати</button>
+    </div>
+    <div class="wlbl"><div class="wl">Нд</div><div class="wl">Пн</div><div class="wl">Вт</div><div class="wl">Ср</div><div class="wl">Чт</div><div class="wl">Пт</div><div class="wl">Сб</div></div>
+    <div class="wgrid" id="bk-wk"></div>
+    <div class="hr"></div>
+    <div class="stitle">Мої книги</div>
+    <div id="bk-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;"></div>
+    <div class="inprow">
+      <input class="inp" id="bk-title" placeholder="Назва книги">
+      <input class="inp" id="bk-pages" type="number" placeholder="Всього стор" style="max-width:110px">
+      <button class="btn" onclick="addBook()" style="background:var(--books);color:#000">+ Книга</button>
+    </div>
+  </div>
+</div>
+
+<!-- STEPS -->
+<div class="sec" id="sec-steps">
+  <div class="card">
+    <div class="card-head"><div class="ci">🦵</div><div><div class="ct">8000 кроків щодня</div><div class="cs">Відміч — виконав чи ні</div></div><div class="cr"><div style="font-family:'Syne',sans-serif;font-weight:800;color:var(--steps);font-size:14px">🔥 <span id="st-streak">0</span></div></div></div>
+    <div class="stoggle">
+      <button class="stbtn" id="st-yes" onclick="setSteps(true)">✓ Виконав 8к+</button>
+      <button class="stbtn" id="st-no"  onclick="setSteps(false)">✗ Не виконав</button>
+    </div>
+    <div style="margin-top:14px;"><div class="stitle">Цей місяць</div><div class="mgrid" id="st-mo"></div></div>
+  </div>
+</div>
+
+<!-- PENTEST -->
+<div class="sec" id="sec-pentest">
+  <div class="card">
+    <div class="card-head"><div class="ci">🛡️</div><div><div class="ct">Пентест — навчання</div><div class="cs">Вт / Пт / Сб / Нд</div></div></div>
+    <div class="wlbl"><div class="wl">Нд</div><div class="wl">Пн</div><div class="wl">Вт</div><div class="wl">Ср</div><div class="wl">Чт</div><div class="wl">Пт</div><div class="wl">Сб</div></div>
+    <div class="wgrid" id="pt-wk"></div>
+    <div style="margin-top:14px;"><div class="stitle">Цей місяць</div><div class="mgrid" id="pt-mo"></div></div>
+    <div class="hr"></div>
+    <div class="stitle">Нотатки</div>
+    <div class="inprow">
+      <input class="inp" id="pt-note" placeholder="Тема / що вивчав">
+      <button class="btn" onclick="addPNote()" style="background:var(--pentest);color:white">Записати</button>
+    </div>
+    <div class="loglist" id="pt-log"></div>
+  </div>
+</div>
+
+<!-- ENGLISH -->
+<div class="sec" id="sec-english">
+  <div class="card">
+    <div class="card-head"><div class="ci">🇬🇧</div><div><div class="ct">Англійська — 15 хв щодня</div><div class="cs">Тест → план → щодень</div></div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+      <div style="background:var(--s2);border-radius:10px;padding:14px;">
+        <div style="font-size:10px;color:var(--muted);margin-bottom:4px;text-transform:uppercase">Мій рівень</div>
+        <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--english)" id="en-lvl">—</div>
+      </div>
+      <div style="background:var(--s2);border-radius:10px;padding:14px;">
+        <div style="font-size:10px;color:var(--muted);margin-bottom:4px;text-transform:uppercase">Стрік</div>
+        <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--english)" id="en-str">0</div>
+        <div style="font-size:11px;color:var(--muted)">днів 🔥</div>
+      </div>
+    </div>
+    <div class="inprow" style="margin-bottom:12px;">
+      <input class="inp" id="en-li" placeholder="Рівень (A2, B1, B2...)">
+      <button class="gbtn" onclick="setEnLvl()">Встановити</button>
+    </div>
+    <div style="background:var(--s2);border-radius:10px;padding:14px;margin-bottom:14px;">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:7px">📋 План навчання</div>
+      <textarea class="inp" id="en-plan" style="width:100%;min-height:70px;resize:vertical;background:var(--bg)" placeholder="Курс, ресурси, ціль на місяць..."></textarea>
+      <button class="gbtn" style="margin-top:8px;font-size:12px" onclick="saveEnPlan()">Зберегти план</button>
+    </div>
+    <div class="stitle">Сьогодні займався?</div>
+    <div class="wlbl"><div class="wl">Нд</div><div class="wl">Пн</div><div class="wl">Вт</div><div class="wl">Ср</div><div class="wl">Чт</div><div class="wl">Пт</div><div class="wl">Сб</div></div>
+    <div class="wgrid" id="en-wk"></div>
+    <div class="inprow" style="margin-top:10px;">
+      <input class="inp" id="en-note" placeholder="Що робив (необов'язково)">
+      <button class="btn" onclick="markEn()" style="background:var(--english);color:#000">✓ Відмітити</button>
+    </div>
+  </div>
+</div>
+
+<!-- DATES -->
+<div class="sec" id="sec-dates">
+  <div class="card">
+    <div class="card-head"><div class="ci">💕</div><div><div class="ct">20 побачень</div><div class="cs">Короткий опис кожного</div></div><div class="cr"><span class="badge" id="dt-badge" style="color:var(--dates)">0/20</span></div></div>
+    <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:8px;">
+      <div class="bnum" id="dt-num" style="color:var(--dates)">0</div><span class="bunit">/ 20</span>
+    </div>
+    <div class="pbar"><div class="pfill" id="dt-pb" style="background:var(--dates);width:0%"></div></div>
+    <div class="hr"></div>
+    <div class="inprow">
+      <input class="inp" id="dt-note" placeholder="Де були / що робили">
+      <input class="inp" id="dt-when" type="date" style="max-width:130px">
+      <button class="btn" onclick="addDate()" style="background:var(--dates);color:white">+ Додати</button>
+    </div>
+    <div id="dt-list" style="margin-top:10px;display:flex;flex-direction:column;gap:6px;"></div>
+  </div>
+</div>
+
+<!-- GLOBAL -->
+<div class="sec" id="sec-global">
+  <div class="card">
+    <div class="card-head"><div class="ci">🌍</div><div><div class="ct">Глобальні цілі</div><div class="cs">Великі цілі — натисни щоб відмітити виконаною</div></div></div>
+    <div id="gl-list"></div>
+  </div>
+</div>
+
+</div>
+
+<script>
+var S;
+function today() { return new Date().toISOString().split('T')[0]; }
+function fmt(d) { var p = d.split('-'); return p[2]+'.'+p[1]+'.'+p[0]; }
+
+function defaultState() {
+  return {
+    gym: { log: {} },
+    bench: { records: [] },
+    money: { log: [] },
+    weight: { log: {}, cal: {} },
+    books: { pages: {}, books: [] },
+    steps: { log: {} },
+    pentest: { log: {}, notes: [] },
+    english: { log: {}, level: '', plan: '' },
+    dates: { list: [] },
+    global: [
+      { id:1, name:'Зробити курс', icon:'🎓', done:false },
+      { id:2, name:'Поїхати закордон', icon:'✈️', done:false },
+      { id:3, name:'Повний медчекап + алергії', icon:'🏥', done:false },
+      { id:4, name:'Похід з палатками', icon:'⛺', done:false },
+      { id:5, name:'Вийти з мінусу', icon:'💰', done:false }
+    ]
+  };
+}
+
+// ===== FIREBASE SYNC =====
+var fbDb = null;
+var fbRef = null;
+var fbReady = false;
+var syncTimeout = null;
+
+function initFirebase() {
+  try {
+    if (FIREBASE_CONFIG.apiKey === 'PASTE_YOUR_apiKey_HERE') {
+      showSyncStatus('local', 'Локально');
+      return;
+    }
+    firebase.initializeApp(FIREBASE_CONFIG);
+    fbDb = firebase.database();
+    fbRef = fbDb.ref('trackers/' + FB_USER);
+
+    var hasLocal = !!localStorage.getItem('g26v3');
+
+    if (!hasLocal) {
+      // No local data — try to load from Firebase
+      showSyncStatus('saving', 'Завантаження...');
+      fbRef.once('value', function(snapshot) {
+        var remote = snapshot.val();
+        if (remote) {
+          try {
+            S = remote;
+            if (!S.weight.cal) S.weight.cal = {};
+            if (!S.global) S.global = defaultState().global;
+            localStorage.setItem('g26v3', JSON.stringify(S));
+            renderAll();
+            showSyncStatus('synced', 'Завантажено ✓');
+          } catch(e) { showSyncStatus('local', 'Локально'); }
+        } else {
+          showSyncStatus('synced', 'Збережено ✓');
+        }
+        fbReady = true;
+      }, function() {
+        showSyncStatus('local', 'Помилка Firebase');
+        fbReady = true;
+      });
+    } else {
+      // Has local data — just mark ready, push to Firebase in background
+      fbReady = true;
+      showSyncStatus('synced', '✓');
+      // Push local to Firebase silently
+      fbRef.set(JSON.parse(JSON.stringify(S)));
+    }
+
+  } catch(e) {
+    showSyncStatus('local', 'Локально');
+  }
+}
+
+function showSyncStatus(type, msg) {
+  var el = document.getElementById('sync-status');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.color = type === 'synced' ? 'var(--green)' : type === 'saving' ? 'var(--yellow)' : 'var(--muted)';
+}
+
+function save() {
+  localStorage.setItem('g26v3', JSON.stringify(S));
+  if (!fbReady || !fbRef) return;
+  clearTimeout(syncTimeout);
+  syncTimeout = setTimeout(function() {
+    fbRef.set(JSON.parse(JSON.stringify(S)))
+      .then(function() { showSyncStatus('synced', '✓'); })
+      .catch(function() {});
+  }, 1500);
+}
+
+function loadState() {
+  try {
+    var raw = localStorage.getItem('g26v3');
+    S = raw ? JSON.parse(raw) : defaultState();
+    if (!S.weight.cal) S.weight.cal = {};
+    if (!S.global) S.global = defaultState().global;
+  } catch(e) {
+    S = defaultState();
+  }
+}
+
+function renderAll() {
+  renderGym(); renderBench(); renderMoney(); renderWeight();
+  renderBooks(); renderSteps(); renderPentest(); renderEnglish();
+  renderDates(); renderGlobal();
+  if (document.getElementById('sec-dash').classList.contains('on')) renderDash();
+  if (document.getElementById('sec-week').classList.contains('on')) renderWeek();
+}
+
+loadState();
+initFirebase();
+
+// Date header
+var mns = ['січня','лютого','березня','квітня','травня','червня','липня','серпня','вересня','жовтня','листопада','грудня'];
+var _n=new Date(); document.getElementById('hdr').textContent = _n.getDate() + ' ' + mns[_n.getMonth()] + ' ' + _n.getFullYear();
+
+function getWeekDays() {
+  // Week starts Sunday (0), ends Saturday (6)
+  var d = new Date(), dow = d.getDay();
+  d.setDate(d.getDate() - dow); // back to Sunday
+  var days = [];
+  for (var i = 0; i < 7; i++) {
+    var x = new Date(d); x.setDate(d.getDate() + i);
+    days.push(x.toISOString().split('T')[0]);
+  }
+  return days;
+}
+
+function getMonthDays() {
+  var y = new Date().getFullYear(), m = new Date().getMonth();
+  var first = new Date(y, m, 1), last = new Date(y, m+1, 0);
+  var days = [];
+  var pad = (first.getDay() || 7) - 1;
+  for (var i = 0; i < pad; i++) days.push(null);
+  for (var i = 1; i <= last.getDate(); i++) {
+    var s = y + '-' + String(m+1).padStart(2,'0') + '-' + String(i).padStart(2,'0');
+    days.push(s);
+  }
+  return days;
+}
+
+function getPastWeeks(n) {
+  var weeks = [], d = new Date(), dow = d.getDay();
+  var curSun = new Date(d);
+  curSun.setDate(d.getDate() - dow); // back to Sunday
+  for (var w = 0; w < n; w++) {
+    var sun = new Date(curSun);
+    sun.setDate(curSun.getDate() - w*7);
+    var days = [];
+    for (var i = 0; i < 7; i++) {
+      var x = new Date(sun); x.setDate(sun.getDate() + i);
+      days.push(x.toISOString().split('T')[0]);
+    }
+    weeks.push(days);
+  }
+  return weeks;
+}
+
+// ===== TABS =====
+function tab(name) {
+  var tabs = ['dash','week','gym','bench','money','weight','books','steps','pentest','english','dates','global'];
+  document.querySelectorAll('.ntab').forEach(function(t, i) {
+    t.classList.toggle('on', tabs[i] === name);
+  });
+  document.querySelectorAll('.sec').forEach(function(s) { s.classList.remove('on'); });
+  document.getElementById('sec-' + name).classList.add('on');
+  if (name === 'dash') renderDash();
+  if (name === 'week') renderWeek();
+}
+
+// ===== DASHBOARD =====
+function getGoalProgress() {
+  var t = today();
+  var _nd=new Date(); var dayOfYear = Math.ceil((_nd - new Date(_nd.getFullYear(), 0, 1)) / 86400000);
+
+  var gymTotal = Object.keys(S.gym.log).filter(function(k) { return S.gym.log[k]; }).length;
+  var gymPct = Math.min(gymTotal / 100 * 100, 100);
+
+  var oneRMs = S.bench.records.filter(function(r) { return r.type === '1rm'; }).sort(function(a,b) { return b.kg - a.kg; });
+  var best1rm = oneRMs.length ? oneRMs[0].kg : 0;
+  var benchPct = Math.min(best1rm / 100 * 100, 100);
+
+  var mlog = S.money.log, lastBal = mlog.length ? mlog[mlog.length-1].val : null;
+  var moneyPct = lastBal === null ? 0 : (lastBal >= 0 ? 100 : Math.max(0, 50 + lastBal / 200));
+
+  var wkeys = Object.keys(S.weight.log).sort();
+  var lastW = wkeys.length ? S.weight.log[wkeys[wkeys.length-1]].val : null;
+  var weightPct = lastW === null ? 0 : Math.min(Math.round(lastW / 80 * 100), 100);
+
+  var booksFinished = S.books.books.filter(function(b) { return b.done; }).length;
+  var booksPct = Math.min(booksFinished / 6 * 100, 100);
+
+  var stepsDone = Object.keys(S.steps.log).filter(function(k) { return S.steps.log[k] === true; }).length;
+  var stepsPct = Math.min(stepsDone / Math.max(1, dayOfYear) * 100, 100);
+
+  var ptDone = Object.keys(S.pentest.log).filter(function(k) { return S.pentest.log[k]; }).length;
+  var ptExpected = Math.max(1, Math.round(dayOfYear / 7 * 4));
+  var pentestPct = Math.min(ptDone / ptExpected * 100, 100);
+
+  var enDone = Object.keys(S.english.log).filter(function(k) { return S.english.log[k]; }).length;
+  var enPct = Math.min(enDone / Math.max(1, dayOfYear) * 100, 100);
+
+  var datesN = S.dates.list.length;
+  var datesPct = Math.min(datesN / 20 * 100, 100);
+
+  var glDone = S.global.filter(function(g) { return g.done; }).length;
+  var glPct = glDone / S.global.length * 100;
+
+  return [
+    { name: 'Зал 100 разів',    pct: gymPct,     color: '#ff6b35', detail: gymTotal + '/100' },
+    { name: 'Жим 100 кг',       pct: benchPct,   color: '#ff9f1c', detail: (best1rm || '—') + '/100 кг' },
+    { name: 'Фінанси в плюсі',  pct: moneyPct,   color: '#2ec4b6', detail: lastBal !== null ? (lastBal >= 0 ? 'В плюсі' : 'В мінусі') : '—' },
+    { name: 'Вага 80 кг',       pct: weightPct,  color: '#26de81', detail: lastW ? lastW + ' кг' : '—' },
+    { name: '6 книг',           pct: booksPct,   color: '#f7b731', detail: booksFinished + '/6' },
+    { name: 'Кроки 8к/день',    pct: stepsPct,   color: '#55efc4', detail: stepsDone + ' днів' },
+    { name: 'Пентест',          pct: pentestPct, color: '#e17055', detail: ptDone + ' сесій' },
+    { name: 'Англійська',       pct: enPct,      color: '#45aaf2', detail: enDone + ' днів' },
+    { name: '20 побачень',      pct: datesPct,   color: '#fd79a8', detail: datesN + '/20' },
+    { name: 'Глобальні цілі',   pct: glPct,      color: '#a29bfe', detail: glDone + '/' + S.global.length }
+  ];
+}
+
+function renderWeekSummary() {
+  var dow = new Date(today() + 'T12:00').getDay();
+  var card = document.getElementById('week-summary-card');
+  // Show on Saturday (6) — end of week
+  if (dow !== 6) { card.style.display = 'none'; return; }
+  card.style.display = 'block';
+
+  var week = getWeekDays(); // Sun–Sat
+  var t = today();
+  var days = week.filter(function(d) { return d <= t; });
+
+  var fmt2 = function(d) { var p = d.split('-'); return p[2] + '.' + p[1]; };
+  document.getElementById('wsum-dates').textContent = fmt2(week[0]) + ' – ' + fmt2(week[6]);
+
+  // calc each metric over the week
+  var gymDays = days.filter(function(d) {
+    var dw = new Date(d+'T12:00').getDay(); return [1,3,5,6].indexOf(dw) >= 0;
+  });
+  var gymDone = gymDays.filter(function(d) { return S.gym.log[d]; }).length;
+
+  var stepsDone = days.filter(function(d) { return S.steps.log[d] === true; }).length;
+
+  var calGood = days.filter(function(d) { return S.weight.cal[d] === 'g' || S.weight.cal[d] === 'y'; }).length;
+
+  var booksDone = days.filter(function(d) { return (S.books.pages[d] || 0) >= 20; }).length;
+  var totalPages = days.reduce(function(a, d) { return a + (S.books.pages[d] || 0); }, 0);
+
+  var ptDays = days.filter(function(d) {
+    var dw = new Date(d+'T12:00').getDay(); return [0,2,5,6].indexOf(dw) >= 0;
+  });
+  var ptDone = ptDays.filter(function(d) { return S.pentest.log[d]; }).length;
+
+  var enDone = days.filter(function(d) { return S.english.log[d]; }).length;
+
+  var rows = [
+    { icon:'🏋️', name:'Зал',        done: gymDone,   total: gymDays.length,  color:'var(--gym)' },
+    { icon:'🦵', name:'Кроки',      done: stepsDone, total: days.length,      color:'var(--steps)' },
+    { icon:'🍏', name:'Калорії',    done: calGood,   total: days.length,      color:'var(--yellow)' },
+    { icon:'📚', name:'Читання',    done: booksDone, total: days.length,      color:'var(--books)',  extra: totalPages + ' стор' },
+    { icon:'🛡️', name:'Пентест',   done: ptDone,    total: ptDays.length,    color:'var(--pentest)' },
+    { icon:'🇬🇧', name:'Англійська', done: enDone,    total: days.length,      color:'var(--english)' },
+  ];
+
+  var totalDone = rows.reduce(function(a, r) { return a + r.done; }, 0);
+  var totalPossible = rows.reduce(function(a, r) { return a + r.total; }, 0);
+  var overallPct = totalPossible ? Math.round(totalDone / totalPossible * 100) : 0;
+  var scoreCol = overallPct >= 80 ? 'var(--green)' : overallPct >= 50 ? 'var(--yellow)' : 'var(--red)';
+
+  document.getElementById('wsum-score').textContent = overallPct + '%';
+  document.getElementById('wsum-score').style.color = scoreCol;
+  document.getElementById('wsum-pbar').style.width = overallPct + '%';
+  document.getElementById('wsum-pbar').style.background = scoreCol;
+
+  var el = document.getElementById('wsum-rows');
+  el.innerHTML = '';
+  rows.forEach(function(r) {
+    if (r.total === 0) return;
+    var pct = Math.round(r.done / r.total * 100);
+    var col = pct >= 80 ? 'var(--green)' : pct >= 50 ? 'var(--yellow)' : 'var(--red)';
+    var row = document.createElement('div');
+    row.className = 'wsr';
+    row.innerHTML =
+      '<span class="wsr-icon">' + r.icon + '</span>' +
+      '<span class="wsr-name">' + r.name + '</span>' +
+      '<span class="wsr-val" style="color:' + col + '">' + r.done + '/' + r.total + (r.extra ? ' · ' + r.extra : '') + '</span>' +
+      '<div class="wsr-bar-wrap"><div class="wsr-bar" style="width:' + pct + '%;background:' + r.color + '"></div></div>';
+    el.appendChild(row);
+  });
+}
+
+function renderTodayChecklist() {
+  var t = today();
+  var dow = new Date(t + 'T12:00').getDay(); // 0=Sun
+  var DAYS_UK = ['неділя','понеділок','вівторок','середа','четвер','п\'ятниця','субота'];
+  var mns2 = ['січня','лютого','березня','квітня','травня','червня','липня','серпня','вересня','жовтня','листопада','грудня'];
+  var n = new Date(t + 'T12:00');
+  document.getElementById('today-date-lbl').textContent = DAYS_UK[dow] + ', ' + n.getDate() + ' ' + mns2[n.getMonth()];
+
+  var gymDay = [1,3,5,6].indexOf(dow) >= 0; // Mon,Wed,Fri,Sat
+  var ptDay  = [0,2,5,6].indexOf(dow) >= 0; // Sun,Tue,Fri,Sat
+
+  var cal = S.weight.cal[t];
+  var calDone = cal === 'g' || cal === 'y';
+
+  var items = [];
+
+  // gym — only show on target days
+  if (gymDay) {
+    items.push({
+      key: 'gym', label: 'Зал', icon: '🏋️',
+      color: 'var(--gym)',
+      done: !!S.gym.log[t],
+      sub: 'Тренування заплановано сьогодні',
+      toggle: function() {
+        S.gym.log[t] = !S.gym.log[t];
+        if (!S.gym.log[t]) delete S.gym.log[t];
+        save(); renderGym(); renderTodayChecklist(); renderDashIfOpen();
+      }
+    });
+  }
+
+  // steps — every day
+  items.push({
+    key: 'steps', label: '8000 кроків', icon: '🦵',
+    color: 'var(--steps)',
+    done: S.steps.log[t] === true,
+    sub: S.steps.log[t] === false ? 'Відмічено як не виконано' : 'Мінімум 8к кроків',
+    toggle: function() {
+      var cur = S.steps.log[t];
+      S.steps.log[t] = cur === true ? false : true;
+      save(); renderSteps(); renderTodayChecklist(); renderDashIfOpen();
+    }
+  });
+
+  // calories — every day
+  var calLabel = cal === 'g' ? '2600+ ккал ✓' : cal === 'y' ? '2400–2600 ккал' : cal === 'r' ? '<2400 ккал' : 'Ще не відмічено';
+  var calColor = cal === 'g' ? 'var(--green)' : cal === 'y' ? 'var(--yellow)' : cal === 'r' ? 'var(--red)' : 'var(--b2)';
+  items.push({
+    key: 'cal', label: 'Калорії', icon: '🍏',
+    color: calColor,
+    done: cal === 'g',
+    ok: calDone,
+    sub: calLabel,
+    isCalCycle: true,
+    toggle: function() {
+      var next = cal === undefined ? 'r' : cal === 'r' ? 'y' : cal === 'y' ? 'g' : undefined;
+      if (next === undefined) { delete S.weight.cal[t]; } else { S.weight.cal[t] = next; }
+      cal = S.weight.cal[t];
+      save(); renderWeight(); renderTodayChecklist(); renderDashIfOpen();
+    }
+  });
+
+  // books — every day
+  var pagesToday = S.books.pages[t] || 0;
+  items.push({
+    key: 'books', label: 'Читання', icon: '📚',
+    color: 'var(--books)',
+    done: pagesToday >= 20,
+    sub: pagesToday > 0 ? pagesToday + ' / 20 сторінок' : '20 сторінок сьогодні',
+    toggle: function() {
+      if (pagesToday >= 20) {
+        // un-mark — reset to 0
+        delete S.books.pages[t];
+      } else {
+        S.books.pages[t] = 20;
+      }
+      save(); renderBooks(); renderTodayChecklist();
+    }
+  });
+
+  // pentest — only on target days
+  if (ptDay) {
+    items.push({
+      key: 'pentest', label: 'Пентест', icon: '🛡️',
+      color: 'var(--pentest)',
+      done: !!S.pentest.log[t],
+      sub: 'Навчання заплановано сьогодні',
+      toggle: function() {
+        S.pentest.log[t] = !S.pentest.log[t];
+        if (!S.pentest.log[t]) delete S.pentest.log[t];
+        save(); renderPentest(); renderTodayChecklist(); renderDashIfOpen();
+      }
+    });
+  }
+
+  // english — every day
+  items.push({
+    key: 'en', label: 'Англійська', icon: '🇬🇧',
+    color: 'var(--english)',
+    done: !!S.english.log[t],
+    sub: '15 хвилин щодня',
+    toggle: function() {
+      S.english.log[t] = !S.english.log[t];
+      if (!S.english.log[t]) delete S.english.log[t];
+      save(); renderEnglish(); renderTodayChecklist(); renderDashIfOpen();
+    }
+  });
+
+  // score — yellow cal counts as 0.5
+  var doneCount = 0;
+  items.forEach(function(it) {
+    if (it.key === 'cal') {
+      if (cal === 'g') doneCount += 1;
+      else if (cal === 'y') doneCount += 0.5;
+    } else {
+      if (it.done) doneCount += 1;
+    }
+  });
+  var pct = Math.round(doneCount / items.length * 100);
+  var scoreCol = pct >= 80 ? 'var(--green)' : pct >= 50 ? 'var(--yellow)' : 'var(--red)';
+  document.getElementById('today-score').textContent = pct + '%';
+  document.getElementById('today-score').style.color = scoreCol;
+  document.getElementById('today-pbar').style.width = pct + '%';
+  document.getElementById('today-pbar').style.background = scoreCol;
+
+  var cl = document.getElementById('today-checklist');
+  cl.innerHTML = '';
+  items.forEach(function(it) {
+    var div = document.createElement('div');
+    var isDone = it.done || it.ok;
+    div.className = 'chk-item' + (isDone ? ' done-item' : '');
+    var boxStyle = isDone ? 'background:' + it.color + ';border-color:' + it.color + ';color:#000' : '';
+    var boxContent = isDone ? '✓' : '';
+    if (it.isCalCycle && cal === 'y') {
+      boxStyle = 'background:var(--yellow);border-color:var(--yellow);color:#000';
+      boxContent = '~';
+    }
+    if (it.isCalCycle && cal === 'r') {
+      boxStyle = 'background:var(--red);border-color:var(--red);color:#fff';
+      boxContent = '✗';
+    }
+    div.setAttribute('data-chk', it.key);
+    div.style.cursor = 'pointer';
+    div.innerHTML =
+      '<div class="chk-box" style="' + boxStyle + '">' + boxContent + '</div>' +
+      '<div style="flex:1"><div class="chk-label">' + it.icon + ' ' + it.label + '</div>' +
+      '<div class="chk-sub">' + it.sub + '</div></div>';
+    cl.appendChild(div);
+  });
+}
+
+function handleChkClick(key) {
+  var t = today();
+  var dow = new Date(t + 'T12:00').getDay();
+  if (key === 'gym') {
+    S.gym.log[t] = !S.gym.log[t];
+    if (!S.gym.log[t]) delete S.gym.log[t];
+    save(); renderGym(); renderTodayChecklist(); renderDashIfOpen();
+  } else if (key === 'steps') {
+    S.steps.log[t] = S.steps.log[t] === true ? false : true;
+    save(); renderSteps(); renderTodayChecklist(); renderDashIfOpen();
+  } else if (key === 'cal') {
+    var cur = S.weight.cal[t];
+    var next = cur === undefined ? 'r' : cur === 'r' ? 'y' : cur === 'y' ? 'g' : undefined;
+    if (next === undefined) { delete S.weight.cal[t]; } else { S.weight.cal[t] = next; }
+    save(); renderWeight(); renderTodayChecklist(); renderDashIfOpen();
+  } else if (key === 'books') {
+    var p = S.books.pages[t] || 0;
+    if (p >= 20) { delete S.books.pages[t]; } else { S.books.pages[t] = 20; }
+    save(); renderBooks(); renderTodayChecklist();
+  } else if (key === 'pentest') {
+    S.pentest.log[t] = !S.pentest.log[t];
+    if (!S.pentest.log[t]) delete S.pentest.log[t];
+    save(); renderPentest(); renderTodayChecklist(); renderDashIfOpen();
+  } else if (key === 'en') {
+    S.english.log[t] = !S.english.log[t];
+    if (!S.english.log[t]) delete S.english.log[t];
+    save(); renderEnglish(); renderTodayChecklist(); renderDashIfOpen();
+  }
+}
+
+document.addEventListener('click', function(e) {
+  var el = e.target.closest('[data-chk]');
+  if (el) handleChkClick(el.getAttribute('data-chk'));
+});
+
+var curPeriod = 'day';
+
+function setPeriod(p) {
+  curPeriod = p;
+  ['day','week','month'].forEach(function(x) {
+    document.getElementById('pt-' + x).classList.toggle('on', x === p);
+  });
+  renderDash();
+}
+
+function getPeriodData() {
+  var t = today(), week = getWeekDays(), month = getMonthDays().filter(function(d) { return d && d <= t; });
+  var days = curPeriod === 'day' ? [t] : curPeriod === 'week' ? week.filter(function(d) { return d <= t; }) : month;
+
+  // gym done in period
+  var gymDone = days.filter(function(d) { return S.gym.log[d]; }).length;
+  // gym target days in period (Mon=1,Wed=3,Fri=5,Sat=6)
+  var gymTarget = days.filter(function(d) {
+    var dow = new Date(d+'T12:00').getDay(); return [1,3,5,6].indexOf(dow) >= 0;
+  }).length;
+
+  // steps
+  var stepsDone = days.filter(function(d) { return S.steps.log[d] === true; }).length;
+  var stepsTotal = days.length;
+
+  // cal: green days
+  var calGreen = days.filter(function(d) { return S.weight.cal[d] === 'g'; }).length;
+  var calOk = days.filter(function(d) { return S.weight.cal[d] === 'g' || S.weight.cal[d] === 'y'; }).length;
+
+  // books: 20 pages days
+  var booksDays = days.filter(function(d) { return (S.books.pages[d] || 0) >= 20; }).length;
+
+  // pentest
+  var ptDone = days.filter(function(d) { return S.pentest.log[d]; }).length;
+  var ptTarget = days.filter(function(d) {
+    var dow = new Date(d+'T12:00').getDay(); return [0,2,5,6].indexOf(dow) >= 0;
+  }).length;
+
+  // english
+  var enDone = days.filter(function(d) { return S.english.log[d]; }).length;
+
+  return {
+    gym: { done: gymDone, target: Math.max(gymTarget, 1) },
+    steps: { done: stepsDone, total: Math.max(stepsTotal, 1) },
+    cal: { green: calGreen, ok: calOk, total: Math.max(days.length, 1) },
+    books: { done: booksDays, total: Math.max(days.length, 1) },
+    pentest: { done: ptDone, target: Math.max(ptTarget, 1) },
+    english: { done: enDone, total: Math.max(days.length, 1) },
+    days: days.length
+  };
+}
+
+function renderPeriodSummary() {
+  var p = getPeriodData();
+  var labels = { day: 'сьогодні', week: 'цього тижня', month: 'цього місяця' };
+  var lbl = labels[curPeriod];
+  var el = document.getElementById('dash-period-summary');
+
+  var gymPct = Math.round(p.gym.done / p.gym.target * 100);
+  var stepsPct = Math.round(p.steps.done / p.steps.total * 100);
+  var calPct = Math.round(p.cal.ok / p.cal.total * 100);
+  var booksPct = Math.round(p.books.done / p.books.total * 100);
+  var ptPct = Math.round(p.pentest.done / p.pentest.target * 100);
+  var enPct = Math.round(p.english.done / p.english.total * 100);
+  var overall = Math.round((gymPct + stepsPct + calPct + booksPct + ptPct + enPct) / 6);
+
+  var colOf = function(pct) { return pct >= 80 ? 'var(--green)' : pct >= 40 ? 'var(--yellow)' : 'var(--red)'; };
+
+  el.innerHTML =
+    '<div class="pstat"><div class="pstat-val" style="color:' + colOf(overall) + '">' + overall + '%</div><div class="pstat-lbl">Загальне ' + lbl + '</div></div>' +
+    '<div class="pstat"><div class="pstat-val" style="color:var(--gym)">' + p.gym.done + '/' + p.gym.target + '</div><div class="pstat-lbl">🏋️ Зал ' + lbl + '</div></div>' +
+    '<div class="pstat"><div class="pstat-val" style="color:var(--steps)">' + p.steps.done + '/' + p.steps.total + '</div><div class="pstat-lbl">🦵 Кроки ' + lbl + '</div></div>';
+}
+
+function renderDash() {
+  renderWeekSummary();
+  renderTodayChecklist();
+  renderPeriodSummary();
+
+  // Radial chart — bars grow from center outward, one bar per goal
+  var goals = getGoalProgress();
+  var canvas = document.getElementById('dash-canvas');
+  var ctx = canvas.getContext('2d');
+  var W = 250, H = 250, cx = 125, cy = 125;
+  ctx.clearRect(0, 0, W, H);
+
+  var n = goals.length;
+  var minR = 20;   // inner radius (center hole)
+  var maxR = 110;  // max outer radius
+  var gap = 0.03;
+  var slice = (Math.PI * 2 - gap * n) / n;
+
+  goals.forEach(function(g, i) {
+    var start = -Math.PI / 2 + i * (slice + gap);
+    var end = start + slice;
+
+    // bg track (full bar, dim)
+    ctx.beginPath();
+    ctx.arc(cx, cy, maxR, start, end);
+    ctx.arc(cx, cy, minR, end, start, true);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(255,255,255,0.04)';
+    ctx.fill();
+
+    // filled: from center (minR) outward by pct
+    if (g.pct > 0) {
+      var fillR = minR + (maxR - minR) * (g.pct / 100);
+      ctx.beginPath();
+      ctx.arc(cx, cy, fillR, start, end);
+      ctx.arc(cx, cy, minR, end, start, true);
+      ctx.closePath();
+      ctx.fillStyle = g.color;
+      ctx.globalAlpha = 0.88;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+  });
+
+  // center avg
+  var avg = Math.round(goals.reduce(function(a, b) { return a + b.pct; }, 0) / goals.length);
+  ctx.fillStyle = '#f0f0f0';
+  ctx.font = '800 26px Syne,sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(avg + '%', cx, cy - 7);
+  ctx.font = '400 11px DM Sans,sans-serif'; ctx.fillStyle = '#666';
+  ctx.fillText('середній', cx, cy + 12);
+
+  // legend
+  var leg = document.getElementById('dash-leg');
+  leg.innerHTML = '';
+  goals.forEach(function(g) {
+    var item = document.createElement('div');
+    item.className = 'dleg-item';
+    item.innerHTML = '<div class="dleg-dot" style="background:' + g.color + '"></div>' +
+      '<span class="dleg-name">' + g.name + '</span>' +
+      '<span class="dleg-pct" style="color:' + g.color + '">' + Math.round(g.pct) + '%</span>' +
+      '<span style="font-size:11px;color:var(--muted);margin-left:4px">' + g.detail + '</span>';
+    leg.appendChild(item);
+  });
+
+  // global goals inline
+  var dg = document.getElementById('dash-global');
+  dg.innerHTML = '';
+  S.global.forEach(function(g) {
+    var div = document.createElement('div');
+    div.className = 'gitem' + (g.done ? ' gdone' : '');
+    div.innerHTML = '<div class="gicon">' + g.icon + '</div>' +
+      '<div class="gname' + (g.done ? ' gx' : '') + '">' + g.name + '</div>' +
+      '<button class="gchk' + (g.done ? ' gd' : '') + '" onclick="toggleGlobal(' + g.id + ')">' + (g.done ? '✓' : '') + '</button>';
+    dg.appendChild(div);
+  });
+
+  document.getElementById('dash-subtitle').textContent =
+    curPeriod === 'day' ? 'Статус на сьогодні' :
+    curPeriod === 'week' ? 'Статус за цей тиждень' : 'Статус за цей місяць';
+}
+
+// ===== WEEK QUALITY =====
+function getDayScore(d) {
+  var dow = new Date(d + 'T12:00').getDay();
+  var gymTarget = [1,3,5,6].indexOf(dow) >= 0;
+  var gymDone = !!S.gym.log[d];
+  var stepsDone = S.steps.log[d] === true;
+  var cal = S.weight.cal[d];
+  var calGreen = cal === 'g', calYellow = cal === 'y', calOk = calGreen || calYellow;
+  var booksDone = (S.books.pages[d] || 0) >= 20;
+  var ptTarget = [0,2,5,6].indexOf(dow) >= 0;
+  var ptDone = !!S.pentest.log[d];
+  var enDone = !!S.english.log[d];
+
+  var items = [
+    { label: '🏋️', done: gymDone,   target: gymTarget, key: 'gym' },
+    { label: '🦵', done: stepsDone, target: true,       key: 'steps' },
+    { label: '🍏', done: calGreen,  ok: calOk, cal: cal, target: true, key: 'cal' },
+    { label: '📚', done: booksDone, target: true,       key: 'books' },
+    { label: '🛡️', done: ptDone,   target: ptTarget,   key: 'pentest' },
+    { label: '🇬🇧', done: enDone,   target: true,       key: 'en' }
+  ];
+
+  var active = items.filter(function(it) { return it.target; });
+  var doneCount = active.filter(function(it) { return it.done; }).length;
+  var pct = active.length ? Math.round(doneCount / active.length * 100) : 0;
+  return { d: d, items: items, pct: pct };
+}
+
+function renderWeek() {
+  var week = getWeekDays(), t = today();
+  var grid = document.getElementById('wq-grid');
+  grid.innerHTML = '';
+  var DAYS = ['Нд','Пн','Вт','Ср','Чт','Пт','Сб'];
+
+  week.forEach(function(d, i) {
+    var isFut = d > t;
+    var sc = getDayScore(d);
+    var col = sc.pct >= 80 ? 'var(--green)' : sc.pct >= 50 ? 'var(--yellow)' : 'var(--red)';
+
+    var itemsHtml = sc.items.filter(function(it) { return it.target; }).map(function(it) {
+      var dotCol;
+      if (it.key === 'cal') {
+        dotCol = it.cal === 'g' ? 'var(--green)' : it.cal === 'y' ? 'var(--yellow)' : it.cal === 'r' ? 'var(--red)' : 'var(--b2)';
+      } else {
+        dotCol = it.done ? col : 'var(--b2)';
+      }
+      return '<div class="wqit"><div class="wqdot" style="background:' + dotCol + '"></div><span>' + it.label + '</span></div>';
+    }).join('');
+
+    var div = document.createElement('div');
+    div.className = 'wqday';
+    if (d === t) div.style.borderColor = 'var(--b2)';
+    div.innerHTML = '<div class="wqdn">' + DAYS[i] + '</div>' +
+      (!isFut
+        ? '<div class="wqsc" style="color:' + col + '">' + sc.pct + '%</div><div class="wqbar" style="background:' + col + '"></div>'
+        : '<div class="wqsc" style="color:var(--b2)">—</div><div style="height:9px"></div>') +
+      '<div class="wqitems">' + itemsHtml + '</div>';
+    grid.appendChild(div);
+  });
+
+  var hist = document.getElementById('wq-hist');
+  hist.innerHTML = '';
+  var past = getPastWeeks(8).slice(1);
+  past.forEach(function(days) {
+    if (days[0] > t) return;
+    var scores = days.filter(function(d) { return d <= t; }).map(getDayScore);
+    if (!scores.length) return;
+    var avg = Math.round(scores.reduce(function(a, s) { return a + s.pct; }, 0) / scores.length);
+    var col = avg >= 80 ? 'var(--green)' : avg >= 50 ? 'var(--yellow)' : 'var(--red)';
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--b)';
+    row.innerHTML = '<span style="font-size:12px;color:var(--muted);min-width:110px">' + fmt(days[0]).slice(0,5) + ' – ' + fmt(days[6]).slice(0,5) + '</span>' +
+      '<div style="flex:1;height:6px;background:var(--s3);border-radius:3px;overflow:hidden"><div style="height:100%;width:' + avg + '%;background:' + col + ';border-radius:3px"></div></div>' +
+      '<span style="font-family:Syne,sans-serif;font-weight:800;font-size:14px;color:' + col + ';min-width:36px;text-align:right">' + avg + '%</span>';
+    hist.appendChild(row);
+  });
+  if (!hist.children.length) hist.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:20px">Поки немає даних за минулі тижні</div>';
+}
+
+// ===== GYM =====
+function renderGym() {
+  var week = getWeekDays(), t = today(), log = S.gym.log;
+  var gymTgt = [1,3,5,6];
+  var wg = document.getElementById('gym-wk'); wg.innerHTML = '';
+  week.forEach(function(d, i) {
+    var isTgt = gymTgt.indexOf(i+1) >= 0, isDone = !!log[d], isFut = d > t;
+    var btn = document.createElement('button');
+    btn.className = 'db' + (isTgt ? ' tgt' : '') + (isDone ? ' done' : '') + (isFut ? ' fut' : '');
+    if (isDone) btn.style.background = 'rgba(255,107,53,.18)';
+    btn.innerHTML = isDone ? '<span class="ck">✓</span>' : '<span class="dn">' + new Date(d+'T12:00').getDate() + '</span>';
+    if (!isFut) (function(dd) { btn.onclick = function() {
+      if (log[dd]) { delete log[dd]; } else { log[dd] = true; }
+      save(); renderGym(); renderDashIfOpen();
+    }; })(d);
+    wg.appendChild(btn);
+  });
+  var mg = document.getElementById('gym-mo'); mg.innerHTML = '';
+  getMonthDays().forEach(function(d) {
+    var c = document.createElement('button');
+    if (!d) { c.className = 'mc fut'; c.textContent = ''; mg.appendChild(c); return; }
+    var isFut = d > t, isDone = !!log[d], isT = d === t;
+    c.className = 'mc' + (isDone ? ' done' : '') + (isFut ? ' fut' : '') + (isT ? ' tod' : '');
+    if (isDone) c.style.background = 'rgba(255,107,53,.2)';
+    c.textContent = new Date(d+'T12:00').getDate();
+    if (!isFut) (function(dd) { c.onclick = function() {
+      if (log[dd]) { delete log[dd]; } else { log[dd] = true; }
+      save(); renderGym(); renderDashIfOpen();
+    }; })(d);
+    mg.appendChild(c);
+  });
+  var total = Object.keys(log).filter(function(k) { return log[k]; }).length;
+  document.getElementById('gym-big').textContent = total;
+  document.getElementById('gym-pb').style.width = Math.min(total, 100) + '%';
+  document.getElementById('gym-badge').textContent = total + '/100';
+  var _nd2=new Date(); var doy = Math.ceil((_nd2 - new Date(_nd2.getFullYear(), 0, 1)) / 86400000);
+  var exp = Math.round(doy / 365 * 100);
+  var diff = total - exp;
+  document.getElementById('gym-trk').innerHTML = diff >= 0
+    ? '<span style="color:var(--green)">+' + diff + ' попереду</span>'
+    : '<span style="color:var(--gym)">' + Math.abs(diff) + ' позаду</span>';
+}
+
+// ===== BENCH =====
+function renderBench() {
+  var recs = S.bench.records;
+  var oneRMs = recs.filter(function(r) { return r.type === '1rm'; }).sort(function(a,b) { return b.kg - a.kg; });
+  var sets = recs.filter(function(r) { return r.type === 'set'; });
+  var last1rm = oneRMs[0] || null, lastSet = sets.length ? sets[sets.length-1] : null;
+  document.getElementById('b1rm').textContent = last1rm ? last1rm.kg + ' кг' : '—';
+  document.getElementById('b1rm-d').textContent = last1rm ? fmt(last1rm.date) : '';
+  document.getElementById('bset').textContent = lastSet ? lastSet.kg + 'кг×' + lastSet.reps : '—';
+  document.getElementById('bset-d').textContent = lastSet ? fmt(lastSet.date) : '';
+  var pct = last1rm ? Math.min(last1rm.kg / 100 * 100, 100) : 0;
+  document.getElementById('bench-pb').style.width = pct + '%';
+  document.getElementById('bench-pct').textContent = last1rm ? last1rm.kg + '/100 кг — ' + Math.round(pct) + '%' : 'Додай перший запис';
+  var log = document.getElementById('bench-log'); log.innerHTML = '';
+  var disp = recs.slice().reverse().slice(0, 8);
+  disp.forEach(function(r, i) {
+    var row = document.createElement('div'); row.className = 'li';
+    var idx = recs.length - 1 - i;
+    row.innerHTML = '<span class="ld">' + fmt(r.date) + '</span>' +
+      '<span class="lv" style="color:var(--bench)">' + (r.type === '1rm' ? r.kg + 'кг (1RM)' : r.kg + 'кг×' + r.reps) + '</span>' +
+      '<button class="dx" onclick="delBench(' + idx + ')">×</button>';
+    log.appendChild(row);
+  });
+}
+function addBench() {
+  var type = document.getElementById('btype').value;
+  var kg = parseFloat(document.getElementById('bkg').value);
+  var reps = parseInt(document.getElementById('breps').value) || 1;
+  if (!kg) return;
+  S.bench.records.push({ type: type, kg: kg, reps: reps, date: today() });
+  save(); document.getElementById('bkg').value = ''; document.getElementById('breps').value = '';
+  renderBench(); renderDashIfOpen();
+}
+function delBench(i) { S.bench.records.splice(i, 1); save(); renderBench(); }
+
+// ===== MONEY =====
+function renderMoney() {
+  var log = S.money.log, last = log.length ? log[log.length-1] : null, prev = log.length > 1 ? log[log.length-2] : null;
+  document.getElementById('money-now').textContent = last ? Number(last.val).toLocaleString('uk') : '—';
+  var tr = document.getElementById('money-trn');
+  if (last && prev) {
+    var diff = last.val - prev.val;
+    tr.innerHTML = diff >= 0
+      ? '<span style="color:var(--green)">▲ +' + Number(diff).toLocaleString('uk') + ' грн від попереднього</span>'
+      : '<span style="color:var(--red)">▼ ' + Number(diff).toLocaleString('uk') + ' грн від попереднього</span>';
+  } else { tr.textContent = last ? (last.val >= 0 ? '✓ В плюсі' : '⚠ В мінусі') : ''; }
+  var ml = document.getElementById('money-log'); ml.innerHTML = '';
+  log.slice().reverse().slice(0, 6).forEach(function(r, i) {
+    var row = document.createElement('div'); row.className = 'li';
+    var c = r.val >= 0 ? 'var(--money)' : 'var(--red)';
+    var idx = log.length - 1 - i;
+    row.innerHTML = '<span class="ld">' + fmt(r.date) + '</span>' +
+      '<span class="lv" style="color:' + c + '">' + Number(r.val).toLocaleString('uk') + ' грн</span>' +
+      '<span class="ln">' + (r.note || '') + '</span>' +
+      '<button class="dx" onclick="delMoney(' + idx + ')">×</button>';
+    ml.appendChild(row);
+  });
+}
+function addMoney() {
+  var val = parseFloat(document.getElementById('money-v').value);
+  var note = document.getElementById('money-n').value.trim();
+  if (isNaN(val)) return;
+  S.money.log.push({ val: val, note: note, date: today() }); save();
+  document.getElementById('money-v').value = ''; document.getElementById('money-n').value = '';
+  renderMoney(); renderDashIfOpen();
+}
+function delMoney(i) { S.money.log.splice(i, 1); save(); renderMoney(); }
+
+// ===== WEIGHT =====
+function renderWeight() {
+  var wkeys = Object.keys(S.weight.log).sort();
+  var lastKey = wkeys.length ? wkeys[wkeys.length-1] : null;
+  var lastW = lastKey ? S.weight.log[lastKey].val : null;
+  document.getElementById('w-now').textContent = lastW !== null ? lastW : '—';
+  document.getElementById('w-diff').textContent = lastW !== null ? Math.abs(80 - lastW).toFixed(1) : '—';
+  var cal = S.weight.cal[today()];
+  document.getElementById('cal-r').className = 'calbtn' + (cal === 'r' ? ' sr' : '');
+  document.getElementById('cal-y').className = 'calbtn' + (cal === 'y' ? ' sy' : '');
+  document.getElementById('cal-g').className = 'calbtn' + (cal === 'g' ? ' sg' : '');
+  var stMap = { r: '🔴 Менше 2400 ккал — не виконано', y: '🟡 2400–2600 ккал — нормально', g: '🟢 2600+ ккал — відмінно! ✓' };
+  document.getElementById('cal-st').textContent = cal ? stMap[cal] : 'Ще не відмічено сьогодні';
+  var wl = document.getElementById('w-log'); wl.innerHTML = '';
+  wkeys.slice().reverse().slice(0, 6).forEach(function(k) {
+    var row = document.createElement('div'); row.className = 'li';
+    row.innerHTML = '<span class="ld">' + fmt(k) + '</span>' +
+      '<span class="lv" style="color:var(--weight)">' + S.weight.log[k].val + ' кг</span>' +
+      '<button class="dx" onclick="delWeight(\'' + k + '\')">×</button>';
+    wl.appendChild(row);
+  });
+}
+function setCal(c) {
+  S.weight.cal[today()] = c; save(); renderWeight();
+  if (document.getElementById('sec-week').classList.contains('on')) renderWeek();
+}
+function addWeight() {
+  var val = parseFloat(document.getElementById('w-val').value);
+  if (!val) return;
+  S.weight.log[today()] = { val: val }; save();
+  document.getElementById('w-val').value = ''; renderWeight(); renderDashIfOpen();
+}
+function delWeight(k) { delete S.weight.log[k]; save(); renderWeight(); }
+
+// ===== BOOKS =====
+function renderBooks() {
+  var week = getWeekDays(), t = today();
+  var wg = document.getElementById('bk-wk'); wg.innerHTML = '';
+  week.forEach(function(d) {
+    var done = (S.books.pages[d] || 0) >= 20, isFut = d > t;
+    var btn = document.createElement('button');
+    btn.className = 'db' + (done ? ' done' : '') + (isFut ? ' fut' : '');
+    if (done) btn.style.background = 'rgba(247,183,49,.18)';
+    var p = S.books.pages[d] || 0;
+    btn.innerHTML = done ? '<span class="ck">✓</span>' : '<span class="dn" style="font-size:9px">' + (p || '') + '</span>';
+    wg.appendChild(btn);
+  });
+  var tp = S.books.pages[today()] || 0;
+  document.getElementById('pg-today').textContent = tp;
+  document.getElementById('pg-bar').style.width = Math.min(tp / 20 * 100, 100) + '%';
+  var fin = S.books.books.filter(function(b) { return b.done; }).length;
+  document.getElementById('bk-badge').textContent = fin + '/6';
+  var bl = document.getElementById('bk-list'); bl.innerHTML = '';
+  S.books.books.forEach(function(b, i) {
+    var pct = Math.min((b.pagesRead || 0) / (b.total || 1) * 100, 100);
+    var div = document.createElement('div');
+    div.style.cssText = 'background:var(--s2);border-radius:10px;padding:12px 14px;';
+    var chkStyle = b.done ? 'background:var(--books);border:2px solid var(--books);color:#000' : 'border:2px solid var(--books);background:none;color:transparent';
+    div.innerHTML = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">' +
+      '<button style="' + chkStyle + ';width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:15px;flex-shrink:0" onclick="toggleBook(' + i + ')">' + (b.done ? '✓' : '') + '</button>' +
+      '<span style="flex:1;font-weight:600;font-size:13px;' + (b.done ? 'text-decoration:line-through;color:var(--muted)' : '') + '">' + b.title + '</span>' +
+      '<span style="font-size:11px;color:var(--muted)">' + (b.pagesRead || 0) + '/' + (b.total || '?') + '</span>' +
+      '<button class="dx" onclick="delBook(' + i + ')">×</button></div>' +
+      '<div class="pbar"><div class="pfill" style="background:var(--books);width:' + pct + '%"></div></div>' +
+      '<div style="display:flex;gap:6px;margin-top:8px;">' +
+      '<input class="inp" type="number" placeholder="Прочитано стор" id="bp-' + i + '" style="font-size:12px;padding:6px 10px">' +
+      '<button class="gbtn" style="font-size:12px;padding:6px 10px" onclick="updBook(' + i + ')">Оновити</button></div>';
+    bl.appendChild(div);
+  });
+}
+function addPages() {
+  var p = parseInt(document.getElementById('pg-add').value) || 0; if (!p) return;
+  var t = today(); S.books.pages[t] = (S.books.pages[t] || 0) + p; save();
+  document.getElementById('pg-add').value = ''; renderBooks();
+  if (document.getElementById('sec-week').classList.contains('on')) renderWeek();
+}
+function addBook() {
+  var title = document.getElementById('bk-title').value.trim();
+  var total = parseInt(document.getElementById('bk-pages').value) || 0; if (!title) return;
+  S.books.books.push({ title: title, total: total, pagesRead: 0, done: false }); save();
+  document.getElementById('bk-title').value = ''; document.getElementById('bk-pages').value = ''; renderBooks();
+}
+function toggleBook(i) { S.books.books[i].done = !S.books.books[i].done; save(); renderBooks(); renderDashIfOpen(); }
+function delBook(i) { S.books.books.splice(i, 1); save(); renderBooks(); }
+function updBook(i) {
+  var el = document.getElementById('bp-' + i); if (!el) return;
+  var v = parseInt(el.value) || 0; S.books.books[i].pagesRead = v;
+  if (S.books.books[i].total && v >= S.books.books[i].total) S.books.books[i].done = true;
+  save(); renderBooks();
+}
+
+// ===== STEPS =====
+function renderSteps() {
+  var t = today(), log = S.steps.log, done = log[t] === true, notDone = log[t] === false;
+  document.getElementById('st-yes').className = 'stbtn' + (done ? ' sy' : '');
+  document.getElementById('st-no').className = 'stbtn' + (notDone ? ' sn' : '');
+  var streak = 0, chk = new Date(today());
+  for (var i = 0; i < 365; i++) {
+    var k = chk.toISOString().split('T')[0];
+    if (log[k] === true) { streak++; chk.setDate(chk.getDate() - 1); } else break;
+  }
+  document.getElementById('st-streak').textContent = streak;
+  var mg = document.getElementById('st-mo'); mg.innerHTML = '';
+  getMonthDays().forEach(function(d) {
+    var c = document.createElement('button');
+    if (!d) { c.className = 'mc fut'; c.textContent = ''; mg.appendChild(c); return; }
+    var isFut = d > t, isDone = log[d] === true, isFail = log[d] === false, isT = d === t;
+    c.className = 'mc' + (isDone ? ' done' : '') + (isFut ? ' fut' : '') + (isT ? ' tod' : '');
+    if (isDone) c.style.background = 'rgba(85,239,196,.2)';
+    if (isFail) c.style.background = 'rgba(255,82,82,.1)';
+    c.textContent = new Date(d+'T12:00').getDate();
+    mg.appendChild(c);
+  });
+}
+function setSteps(val) {
+  S.steps.log[today()] = val; save(); renderSteps();
+  if (document.getElementById('sec-week').classList.contains('on')) renderWeek();
+  renderDashIfOpen();
+}
+
+// ===== PENTEST =====
+function renderPentest() {
+  var week = getWeekDays(), t = today(), log = S.pentest.log;
+  var ptTgt = [1,4,5,6];
+  var wg = document.getElementById('pt-wk'); wg.innerHTML = '';
+  week.forEach(function(d, i) {
+    var isTgt = ptTgt.indexOf(i) >= 0, isDone = !!log[d], isFut = d > t;
+    var btn = document.createElement('button');
+    btn.className = 'db' + (isTgt ? ' tgt' : '') + (isDone ? ' done' : '') + (isFut ? ' fut' : '');
+    if (isDone) btn.style.background = 'rgba(225,112,85,.18)';
+    btn.innerHTML = isDone ? '<span class="ck">✓</span>' : '<span class="dn">' + new Date(d+'T12:00').getDate() + '</span>';
+    if (!isFut) (function(dd) { btn.onclick = function() {
+      if (log[dd]) { delete log[dd]; } else { log[dd] = true; }
+      save(); renderPentest();
+      if (document.getElementById('sec-week').classList.contains('on')) renderWeek();
+    }; })(d);
+    wg.appendChild(btn);
+  });
+  var mg = document.getElementById('pt-mo'); mg.innerHTML = '';
+  getMonthDays().forEach(function(d) {
+    var c = document.createElement('button');
+    if (!d) { c.className = 'mc fut'; c.textContent = ''; mg.appendChild(c); return; }
+    var isFut = d > t, isDone = !!log[d], isT = d === t;
+    c.className = 'mc' + (isDone ? ' done' : '') + (isFut ? ' fut' : '') + (isT ? ' tod' : '');
+    if (isDone) c.style.background = 'rgba(225,112,85,.2)';
+    c.textContent = new Date(d+'T12:00').getDate();
+    if (!isFut) (function(dd) { c.onclick = function() {
+      if (log[dd]) { delete log[dd]; } else { log[dd] = true; }
+      save(); renderPentest();
+    }; })(d);
+    mg.appendChild(c);
+  });
+  var nl = document.getElementById('pt-log'); nl.innerHTML = '';
+  S.pentest.notes.slice().reverse().slice(0, 8).forEach(function(n, i) {
+    var row = document.createElement('div'); row.className = 'li';
+    var idx = S.pentest.notes.length - 1 - i;
+    row.innerHTML = '<span class="ld">' + fmt(n.date) + '</span><span class="ln">' + n.text + '</span>' +
+      '<button class="dx" onclick="delPNote(' + idx + ')">×</button>';
+    nl.appendChild(row);
+  });
+}
+function addPNote() {
+  var txt = document.getElementById('pt-note').value.trim(); if (!txt) return;
+  S.pentest.log[today()] = true; S.pentest.notes.push({ text: txt, date: today() }); save();
+  document.getElementById('pt-note').value = ''; renderPentest();
+  if (document.getElementById('sec-week').classList.contains('on')) renderWeek();
+}
+function delPNote(i) { S.pentest.notes.splice(i, 1); save(); renderPentest(); }
+
+// ===== ENGLISH =====
+function renderEnglish() {
+  var week = getWeekDays(), t = today(), log = S.english.log;
+  document.getElementById('en-lvl').textContent = S.english.level || '—';
+  if (S.english.plan) document.getElementById('en-plan').value = S.english.plan;
+  var streak = 0, chk = new Date(today());
+  for (var i = 0; i < 365; i++) {
+    var k = chk.toISOString().split('T')[0];
+    if (log[k]) { streak++; chk.setDate(chk.getDate() - 1); } else break;
+  }
+  document.getElementById('en-str').textContent = streak;
+  var wg = document.getElementById('en-wk'); wg.innerHTML = '';
+  week.forEach(function(d) {
+    var isDone = !!log[d], isFut = d > t;
+    var btn = document.createElement('button');
+    btn.className = 'db' + (isDone ? ' done' : '') + (isFut ? ' fut' : '');
+    if (isDone) btn.style.background = 'rgba(69,170,242,.18)';
+    btn.innerHTML = isDone ? '<span class="ck">✓</span>' : '<span class="dn">' + new Date(d+'T12:00').getDate() + '</span>';
+    if (!isFut) (function(dd) { btn.onclick = function() {
+      if (log[dd]) { delete log[dd]; } else { log[dd] = true; }
+      save(); renderEnglish();
+      if (document.getElementById('sec-week').classList.contains('on')) renderWeek();
+    }; })(d);
+    wg.appendChild(btn);
+  });
+}
+function setEnLvl() {
+  var v = document.getElementById('en-li').value.trim(); if (!v) return;
+  S.english.level = v; save(); document.getElementById('en-li').value = ''; renderEnglish();
+}
+function saveEnPlan() { S.english.plan = document.getElementById('en-plan').value; save(); }
+function markEn() {
+  var note = document.getElementById('en-note').value.trim();
+  S.english.log[today()] = note || true; save(); document.getElementById('en-note').value = ''; renderEnglish();
+  if (document.getElementById('sec-week').classList.contains('on')) renderWeek();
+}
+
+// ===== DATES =====
+function renderDates() {
+  var n = S.dates.list.length;
+  document.getElementById('dt-num').textContent = n;
+  document.getElementById('dt-badge').textContent = n + '/20';
+  document.getElementById('dt-pb').style.width = Math.min(n / 20 * 100, 100) + '%';
+  var dl = document.getElementById('dt-list'); dl.innerHTML = '';
+  S.dates.list.slice().reverse().forEach(function(d, i) {
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:10px;background:var(--s2);border-radius:9px;padding:10px 14px;';
+    var idx = S.dates.list.length - 1 - i;
+    row.innerHTML = '<span style="font-family:Syne,sans-serif;font-size:16px;font-weight:800;color:var(--dates);min-width:26px">#' + (S.dates.list.length - i) + '</span>' +
+      '<span style="font-size:13px;flex:1">' + d.note + '</span>' +
+      '<span style="font-size:11px;color:var(--muted)">' + (d.when ? fmt(d.when) : '') + '</span>' +
+      '<button class="dx" onclick="delDt(' + idx + ')">×</button>';
+    dl.appendChild(row);
+  });
+}
+function addDate() {
+  var note = document.getElementById('dt-note').value.trim();
+  var when = document.getElementById('dt-when').value; if (!note) return;
+  S.dates.list.push({ note: note, when: when || today() }); save();
+  document.getElementById('dt-note').value = ''; document.getElementById('dt-when').value = '';
+  renderDates(); renderDashIfOpen();
+}
+function delDt(i) { S.dates.list.splice(i, 1); save(); renderDates(); }
+
+// ===== GLOBAL =====
+function renderGlobal() {
+  var gl = document.getElementById('gl-list'); gl.innerHTML = '';
+  S.global.forEach(function(g) {
+    var div = document.createElement('div');
+    div.className = 'gitem' + (g.done ? ' gdone' : '');
+    div.innerHTML = '<div class="gicon">' + g.icon + '</div>' +
+      '<div class="gname' + (g.done ? ' gx' : '') + '">' + g.name + '</div>' +
+      '<button class="gchk' + (g.done ? ' gd' : '') + '" onclick="toggleGlobal(' + g.id + ')">' + (g.done ? '✓' : '') + '</button>';
+    gl.appendChild(div);
+  });
+}
+function toggleGlobal(id) {
+  var g = S.global.find(function(x) { return x.id === id; });
+  if (g) { g.done = !g.done; save(); renderGlobal(); renderDashIfOpen(); }
+}
+
+function renderDashIfOpen() {
+  if (document.getElementById('sec-dash').classList.contains('on')) renderDash();
+}
+
+// ===== INIT =====
+renderAll();
+renderDash();
+</script>
+</body>
+</html>
