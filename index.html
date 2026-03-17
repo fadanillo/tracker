@@ -171,30 +171,132 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
 </head>
 <body>
 <!-- PIN OVERLAY -->
-<div id="pin-overlay" style="display:flex;position:fixed;inset:0;background:#0d0d0d;z-index:9999;flex-direction:column;align-items:center;justify-content:center;gap:20px;">
-  <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#f0f0f0;" id="pin-title">🔒 Введи PIN</div>
+<div id="pin-overlay" style="display:flex;position:fixed;inset:0;background:#0d0d0d;z-index:99999;flex-direction:column;align-items:center;justify-content:center;gap:18px;font-family:Syne,sans-serif;">
+  <div style="font-size:22px;font-weight:800;color:#f0f0f0;">🔒 Введи PIN</div>
   <div style="font-size:13px;color:#666;" id="pin-sub">Для доступу до трекера</div>
-  <div style="display:flex;gap:14px;margin:8px 0;" id="pin-dots">
-    <div class="pin-dot"></div><div class="pin-dot"></div>
-    <div class="pin-dot"></div><div class="pin-dot"></div>
+  <div style="display:flex;gap:16px;" id="pin-dots">
+    <div id="d0" style="width:16px;height:16px;border-radius:50%;border:2px solid #444;transition:all .15s;"></div>
+    <div id="d1" style="width:16px;height:16px;border-radius:50%;border:2px solid #444;transition:all .15s;"></div>
+    <div id="d2" style="width:16px;height:16px;border-radius:50%;border:2px solid #444;transition:all .15s;"></div>
+    <div id="d3" style="width:16px;height:16px;border-radius:50%;border:2px solid #444;transition:all .15s;"></div>
   </div>
-  <div style="font-size:13px;color:#ff5252;min-height:20px;text-align:center;max-width:260px;" id="pin-err"></div>
-  <div style="display:grid;grid-template-columns:repeat(3,72px);gap:10px;">
-    <button class="pin-btn" onclick="pinKey('1')">1</button>
-    <button class="pin-btn" onclick="pinKey('2')">2</button>
-    <button class="pin-btn" onclick="pinKey('3')">3</button>
-    <button class="pin-btn" onclick="pinKey('4')">4</button>
-    <button class="pin-btn" onclick="pinKey('5')">5</button>
-    <button class="pin-btn" onclick="pinKey('6')">6</button>
-    <button class="pin-btn" onclick="pinKey('7')">7</button>
-    <button class="pin-btn" onclick="pinKey('8')">8</button>
-    <button class="pin-btn" onclick="pinKey('9')">9</button>
-    <button class="pin-btn" onclick="pinKey('del')" style="color:#666;font-size:18px;">⌫</button>
-    <button class="pin-btn" onclick="pinKey('0')">0</button>
-    <button class="pin-btn" onclick="pinEnter()" id="pin-confirm" style="background:#ff6b35;color:#000;font-weight:800;">OK</button>
+  <div id="pin-err" style="font-size:13px;color:#ff5252;min-height:18px;text-align:center;max-width:260px;"></div>
+  <div id="pin-pad" style="display:grid;grid-template-columns:repeat(3,72px);gap:10px;">
+    <button data-k="1" style="width:72px;height:72px;border-radius:14px;border:1.5px solid #2e2e2e;background:#141414;color:#f0f0f0;font-family:Syne,sans-serif;font-size:24px;font-weight:700;cursor:pointer;">1</button>
+    <button data-k="2" style="width:72px;height:72px;border-radius:14px;border:1.5px solid #2e2e2e;background:#141414;color:#f0f0f0;font-family:Syne,sans-serif;font-size:24px;font-weight:700;cursor:pointer;">2</button>
+    <button data-k="3" style="width:72px;height:72px;border-radius:14px;border:1.5px solid #2e2e2e;background:#141414;color:#f0f0f0;font-family:Syne,sans-serif;font-size:24px;font-weight:700;cursor:pointer;">3</button>
+    <button data-k="4" style="width:72px;height:72px;border-radius:14px;border:1.5px solid #2e2e2e;background:#141414;color:#f0f0f0;font-family:Syne,sans-serif;font-size:24px;font-weight:700;cursor:pointer;">4</button>
+    <button data-k="5" style="width:72px;height:72px;border-radius:14px;border:1.5px solid #2e2e2e;background:#141414;color:#f0f0f0;font-family:Syne,sans-serif;font-size:24px;font-weight:700;cursor:pointer;">5</button>
+    <button data-k="6" style="width:72px;height:72px;border-radius:14px;border:1.5px solid #2e2e2e;background:#141414;color:#f0f0f0;font-family:Syne,sans-serif;font-size:24px;font-weight:700;cursor:pointer;">6</button>
+    <button data-k="7" style="width:72px;height:72px;border-radius:14px;border:1.5px solid #2e2e2e;background:#141414;color:#f0f0f0;font-family:Syne,sans-serif;font-size:24px;font-weight:700;cursor:pointer;">7</button>
+    <button data-k="8" style="width:72px;height:72px;border-radius:14px;border:1.5px solid #2e2e2e;background:#141414;color:#f0f0f0;font-family:Syne,sans-serif;font-size:24px;font-weight:700;cursor:pointer;">8</button>
+    <button data-k="9" style="width:72px;height:72px;border-radius:14px;border:1.5px solid #2e2e2e;background:#141414;color:#f0f0f0;font-family:Syne,sans-serif;font-size:24px;font-weight:700;cursor:pointer;">9</button>
+    <button data-k="del" style="width:72px;height:72px;border-radius:14px;border:1.5px solid #2e2e2e;background:#141414;color:#666;font-family:Syne,sans-serif;font-size:20px;font-weight:700;cursor:pointer;">⌫</button>
+    <button data-k="0" style="width:72px;height:72px;border-radius:14px;border:1.5px solid #2e2e2e;background:#141414;color:#f0f0f0;font-family:Syne,sans-serif;font-size:24px;font-weight:700;cursor:pointer;">0</button>
+    <button data-k="ok" style="width:72px;height:72px;border-radius:14px;border:none;background:#ff6b35;color:#000;font-family:Syne,sans-serif;font-size:16px;font-weight:800;cursor:pointer;" id="pin-ok">OK</button>
   </div>
-  <div style="font-size:11px;color:#666;" id="pin-hint"></div>
 </div>
+
+<script>
+// PIN — runs immediately, before anything else
+(function() {
+  var PKEY = 'tracker_pin';
+  var LKEY = 'tracker_lock';
+  var val = '';
+  var PIN = '9511';
+
+  // ensure PIN is set
+  if (!localStorage.getItem(PKEY)) localStorage.setItem(PKEY, PIN);
+
+  function getLock() { try { return JSON.parse(sessionStorage.getItem(LKEY)||'{}'); } catch(e) { return {}; } }
+  function setLock(d) { sessionStorage.setItem(LKEY, JSON.stringify(d)); }
+
+  function fillDots() {
+    for (var i = 0; i < 4; i++) {
+      var el = document.getElementById('d'+i);
+      if (el) {
+        el.style.background = i < val.length ? '#ff6b35' : 'transparent';
+        el.style.borderColor = i < val.length ? '#ff6b35' : '#444';
+      }
+    }
+  }
+
+  function shake() {
+    var dots = document.getElementById('pin-dots');
+    dots.style.transform = 'translateX(8px)';
+    setTimeout(function(){ dots.style.transform = 'translateX(-8px)'; }, 80);
+    setTimeout(function(){ dots.style.transform = 'translateX(4px)'; }, 160);
+    setTimeout(function(){ dots.style.transform = 'translateX(0)'; }, 240);
+  }
+
+  function tryUnlock() {
+    var stored = localStorage.getItem(PKEY);
+    if (val === stored) {
+      document.getElementById('pin-overlay').style.display = 'none';
+      setLock({ attempts: 0, blockedUntil: null });
+    } else {
+      shake();
+      val = '';
+      fillDots();
+      var lock = getLock();
+      lock.attempts = (lock.attempts || 0) + 1;
+      var n = lock.attempts;
+      if (n >= 5) {
+        var secs = 60 * Math.pow(2, n - 5);
+        lock.blockedUntil = Date.now() + secs * 1000;
+        startTimer();
+      } else {
+        document.getElementById('pin-err').textContent = '❌ Невірно · залишилось ' + (5 - n);
+      }
+      setLock(lock);
+    }
+  }
+
+  function startTimer() {
+    var t = setInterval(function() {
+      var lock = getLock();
+      var rem = Math.ceil((lock.blockedUntil - Date.now()) / 1000);
+      if (rem <= 0) {
+        clearInterval(t);
+        document.getElementById('pin-err').textContent = '';
+      } else {
+        var txt = rem >= 60 ? Math.ceil(rem/60) + ' хв' : rem + 'с';
+        document.getElementById('pin-err').textContent = '⏳ Заблоковано: ' + txt;
+      }
+    }, 500);
+  }
+
+  function pressKey(k) {
+    var lock = getLock();
+    if (lock.blockedUntil && Date.now() < lock.blockedUntil) return;
+    if (k === 'del') { val = val.slice(0,-1); fillDots(); return; }
+    if (k === 'ok') { if (val.length === 4) tryUnlock(); return; }
+    if (val.length >= 4) return;
+    val += k;
+    fillDots();
+    if (val.length === 4) setTimeout(tryUnlock, 150);
+  }
+
+  // attach to numpad via event delegation on the grid
+  var pad = document.getElementById('pin-pad');
+  pad.addEventListener('click', function(e) {
+    var btn = e.target.closest('button');
+    if (btn && btn.dataset.k) pressKey(btn.dataset.k);
+  });
+
+  // keyboard
+  document.addEventListener('keydown', function(e) {
+    if (document.getElementById('pin-overlay').style.display === 'none') return;
+    if (e.key >= '0' && e.key <= '9') pressKey(e.key);
+    else if (e.key === 'Backspace') pressKey('del');
+    else if (e.key === 'Enter') pressKey('ok');
+  });
+
+  // check if already blocked on load
+  var lock = getLock();
+  if (lock.blockedUntil && Date.now() < lock.blockedUntil) startTimer();
+})();
+</script>
 <div class="app">
 <header>
   <div class="logo">цілі<em>.</em>2026</div>
@@ -1800,129 +1902,8 @@ function renderDashIfOpen() {
   nav.addEventListener('wheel', function(e) { e.preventDefault(); nav.scrollLeft += e.deltaY; }, { passive: false });
 })();
 
-// ===== PIN LOCK =====
-var PIN_KEY = 'tracker_pin';
-var LOCK_KEY = 'tracker_lock';
-var pinVal = '';
-
-function getLockData() {
-  try { return JSON.parse(sessionStorage.getItem(LOCK_KEY) || '{}'); } catch(e) { return {}; }
-}
-function setLockData(d) { sessionStorage.setItem(LOCK_KEY, JSON.stringify(d)); }
-
-function getBlockSeconds(attempts) {
-  if (attempts < 5) return 0;
-  return 60 * Math.pow(2, attempts - 5);
-}
-
-function updateDots(val) {
-  var dots = document.querySelectorAll('.pin-dot');
-  dots.forEach(function(d, i) { d.classList.toggle('filled', i < val.length); });
-}
-
-function pinKey(k) {
-  var lock = getLockData();
-  if (lock.blockedUntil && Date.now() < lock.blockedUntil) return;
-  if (k === 'del') {
-    pinVal = pinVal.slice(0, -1);
-    updateDots(pinVal);
-    document.getElementById('pin-err').textContent = '';
-    return;
-  }
-  if (pinVal.length >= 4) return; // max 4 digits
-  pinVal += k;
-  updateDots(pinVal);
-  document.getElementById('pin-err').textContent = '';
-  if (pinVal.length === 4) {
-    setTimeout(pinEnter, 150); // small delay so last dot fills before check
-  }
-}
-
-function pinEnter() {
-  var lock = getLockData();
-  if (lock.blockedUntil && Date.now() < lock.blockedUntil) return;
-
-  var stored = localStorage.getItem(PIN_KEY);
-  var err = document.getElementById('pin-err');
-
-  if (pinVal === stored) {
-    lock.attempts = 0;
-    lock.blockedUntil = null;
-    setLockData(lock);
-    document.getElementById('pin-overlay').style.display = 'none';
-    pinVal = '';
-    return;
-  }
-
-  pinVal = '';
-  updateDots('');
-  lock.attempts = (lock.attempts || 0) + 1;
-  var blockSecs = getBlockSeconds(lock.attempts);
-
-  if (blockSecs > 0) {
-    lock.blockedUntil = Date.now() + blockSecs * 1000;
-    setLockData(lock);
-    startBlockTimer();
-  } else {
-    var left = 5 - lock.attempts;
-    err.textContent = '❌ Невірний PIN · залишилось: ' + left;
-    setLockData(lock);
-  }
-}
-
-function startBlockTimer() {
-  var err = document.getElementById('pin-err');
-  var inp = document.getElementById('pin-confirm');
-  var t = setInterval(function() {
-    var lock = getLockData();
-    var rem = Math.ceil((lock.blockedUntil - Date.now()) / 1000);
-    if (rem <= 0) {
-      clearInterval(t);
-      err.textContent = '';
-      if (inp) inp.disabled = false;
-    } else {
-      var txt = rem >= 60 ? Math.ceil(rem/60) + ' хв' : rem + 'с';
-      err.textContent = '⏳ Заблоковано на ' + txt;
-      if (inp) inp.disabled = true;
-    }
-  }, 500);
-}
-
-function updatePinUI() {
-  var lock = getLockData();
-  pinVal = '';
-  updateDots('');
-  document.getElementById('pin-err').textContent = '';
-  if (lock.blockedUntil && Date.now() < lock.blockedUntil) {
-    startBlockTimer();
-  }
-}
-
-function showPin() {
-  document.getElementById('pin-overlay').style.display = 'flex';
-  updatePinUI();
-}
-
-// Keyboard support for PIN
-document.addEventListener('keydown', function(e) {
-  if (document.getElementById('pin-overlay').style.display === 'none') return;
-  if (e.key >= '0' && e.key <= '9') pinKey(e.key);
-  else if (e.key === 'Backspace') pinKey('del');
-  else if (e.key === 'Enter') pinEnter();
-});
-
 // ===== INIT =====
 loadState();
-// Set hardcoded PIN if not set
-if (!localStorage.getItem(PIN_KEY)) {
-  localStorage.setItem(PIN_KEY, '9511');
-}
-// Set PIN
-if (!localStorage.getItem(PIN_KEY)) {
-  localStorage.setItem(PIN_KEY, '9511');
-}
-loadState();
-updatePinUI();
 initFirebase(function() {
   renderAll();
   renderDash();
