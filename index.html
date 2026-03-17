@@ -210,15 +210,15 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
     <div id="today-checklist" style="display:flex;flex-direction:column;gap:6px;"></div>
   </div>
 
-  <!-- Period tabs -->
-  <div style="display:flex;gap:4px;background:var(--s1);padding:4px;border-radius:var(--r);border:1px solid var(--b);margin-bottom:14px;">
-    <button class="ptab on" id="pt-day"   onclick="setPeriod('day')"  >📅 День</button>
-    <button class="ptab"    id="pt-week"  onclick="setPeriod('week')" >📆 Тиждень</button>
-    <button class="ptab"    id="pt-month" onclick="setPeriod('month')">🗓 Місяць</button>
+  <!-- Monthly chart -->
+  <div class="card" style="margin-bottom:14px;">
+    <div class="card-head" style="margin-bottom:14px;">
+      <div class="ci">📈</div>
+      <div><div class="ct" id="month-chart-title">Місяць</div><div class="cs">% виконання по днях</div></div>
+    </div>
+    <div id="month-chart" style="display:flex;align-items:flex-end;gap:2px;height:70px;"></div>
+    <div id="month-chart-labels" style="display:flex;gap:2px;margin-top:4px;"></div>
   </div>
-
-  <!-- Period summary -->
-  <div id="dash-period-summary" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;"></div>
 
   <!-- Radial chart + legend -->
   <div class="card">
@@ -600,7 +600,28 @@ function loadState() {
   }
 }
 
+function ensureState() {
+  var def = defaultState();
+  if (!S) S = def;
+  var keys = ['gym','bench','money','weight','books','steps','pentest','english','dates','global'];
+  keys.forEach(function(k) { if (!S[k]) S[k] = def[k]; });
+  if (!S.gym.log) S.gym.log = {};
+  if (!S.bench.records) S.bench.records = [];
+  if (!S.money.log) S.money.log = [];
+  if (!S.weight.log) S.weight.log = {};
+  if (!S.weight.cal) S.weight.cal = {};
+  if (!S.books.pages) S.books.pages = {};
+  if (!S.books.books) S.books.books = [];
+  if (!S.steps.log) S.steps.log = {};
+  if (!S.pentest.log) S.pentest.log = {};
+  if (!S.pentest.notes) S.pentest.notes = [];
+  if (!S.english.log) S.english.log = {};
+  if (!S.dates.list) S.dates.list = [];
+  if (!S.global) S.global = def.global;
+}
+
 function renderAll() {
+  ensureState();
   renderGym(); renderBench(); renderMoney(); renderWeight();
   renderBooks(); renderSteps(); renderPentest(); renderEnglish();
   renderDates(); renderGlobal();
@@ -981,104 +1002,59 @@ document.addEventListener('click', function(e) {
   if (el) handleChkClick(el.getAttribute('data-chk'));
 });
 
-var curPeriod = 'day';
+function renderMonthChart() {
+  ensureState();
+  var t = today();
+  var y = new Date().getFullYear(), m = new Date().getMonth();
+  var daysInMonth = new Date(y, m+1, 0).getDate();
+  var mns2 = ['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
+  document.getElementById('month-chart-title').textContent = mns2[m] + ' ' + y;
 
-function setPeriod(p) {
-  curPeriod = p;
-  ['day','week','month'].forEach(function(x) {
-    document.getElementById('pt-' + x).classList.toggle('on', x === p);
-  });
-  renderDash();
-}
+  var chart = document.getElementById('month-chart');
+  var labels = document.getElementById('month-chart-labels');
+  chart.innerHTML = ''; labels.innerHTML = '';
 
-function getPeriodData() {
-  var t = today(), week = getWeekDays(), month = getMonthDays().filter(function(d) { return d && d <= t; });
-  var days = curPeriod === 'day' ? [t] : curPeriod === 'week' ? week.filter(function(d) { return d <= t; }) : month;
+  for (var day = 1; day <= daysInMonth; day++) {
+    var d = y + '-' + String(m+1).padStart(2,'0') + '-' + String(day).padStart(2,'0');
+    var isFut = d > t;
+    var dow = new Date(d+'T12:00').getDay();
+    var gymTarget = [1,3,5,6].indexOf(dow) >= 0;
+    var ptTarget  = [0,2,5,6].indexOf(dow) >= 0;
 
-  // gym done in period
-  var gymDone = days.filter(function(d) { return S.gym.log[d]; }).length;
-  // gym target days in period (Mon=1,Wed=3,Fri=5,Sat=6)
-  var gymTarget = days.filter(function(d) {
-    var dow = new Date(d+'T12:00').getDay(); return [1,3,5,6].indexOf(dow) >= 0;
-  }).length;
+    var score = null;
+    if (!isFut) {
+      var total = 0, done = 0;
+      // steps
+      total++; if (S.steps.log[d] === true) done++;
+      // cal
+      total++; var cal = S.weight.cal[d];
+      if (cal === 'g') done += 1; else if (cal === 'y') done += 0.5;
+      // books
+      total++; if ((S.books.pages[d] || 0) >= 20) done++;
+      // english
+      total++; if (S.english.log[d]) done++;
+      // gym
+      if (gymTarget) { total++; if (S.gym.log[d]) done++; }
+      // pentest
+      if (ptTarget) { total++; if (S.pentest.log[d]) done++; }
+      score = Math.round(done / total * 100);
+    }
 
-  // steps
-  var stepsDone = days.filter(function(d) { return S.steps.log[d] === true; }).length;
-  var stepsTotal = days.length;
+    var col = score === null ? 'var(--b)' : score >= 80 ? 'var(--green)' : score >= 50 ? 'var(--yellow)' : 'var(--red)';
+    var h = score === null ? 4 : Math.max(4, score * 0.66); // max ~66px
 
-  // cal: green days
-  var calGreen = days.filter(function(d) { return S.weight.cal[d] === 'g'; }).length;
-  var calOk = days.filter(function(d) { return S.weight.cal[d] === 'g' || S.weight.cal[d] === 'y'; }).length;
+    // bar
+    var bar = document.createElement('div');
+    bar.style.cssText = 'flex:1;border-radius:3px 3px 0 0;transition:height .3s;background:' + col + ';height:' + h + 'px;opacity:' + (isFut ? '0.15' : '0.85') + ';position:relative;';
+    if (score !== null) bar.title = day + ' — ' + score + '%';
+    chart.appendChild(bar);
 
-  // books: 20 pages days
-  var booksDays = days.filter(function(d) { return (S.books.pages[d] || 0) >= 20; }).length;
-
-  // pentest
-  var ptDone = days.filter(function(d) { return S.pentest.log[d]; }).length;
-  var ptTarget = days.filter(function(d) {
-    var dow = new Date(d+'T12:00').getDay(); return [0,2,5,6].indexOf(dow) >= 0;
-  }).length;
-
-  // english
-  var enDone = days.filter(function(d) { return S.english.log[d]; }).length;
-
-  return {
-    gym: { done: gymDone, target: Math.max(gymTarget, 1) },
-    steps: { done: stepsDone, total: Math.max(stepsTotal, 1) },
-    cal: { green: calGreen, ok: calOk, total: Math.max(days.length, 1) },
-    books: { done: booksDays, total: Math.max(days.length, 1) },
-    pentest: { done: ptDone, target: Math.max(ptTarget, 1) },
-    english: { done: enDone, total: Math.max(days.length, 1) },
-    days: days.length
-  };
-}
-
-function renderPeriodSummary() {
-  var p = getPeriodData();
-  var labels = { day: 'сьогодні', week: 'цього тижня', month: 'цього місяця' };
-  var lbl = labels[curPeriod];
-  var el = document.getElementById('dash-period-summary');
-  var colOf = function(pct) { return pct >= 80 ? 'var(--green)' : pct >= 40 ? 'var(--yellow)' : 'var(--red)'; };
-
-  var cards = [];
-
-  if (curPeriod === 'day') {
-    var dow = new Date(today() + 'T12:00').getDay();
-    var gymToday = [1,3,5,6].indexOf(dow) >= 0;
-    var ptToday  = [0,2,5,6].indexOf(dow) >= 0;
-
-    // Overall score of what's relevant today
-    var relevantPcts = [];
-    relevantPcts.push(p.steps.done > 0 ? 100 : 0);
-    relevantPcts.push(p.cal.ok > 0 ? (p.cal.green > 0 ? 100 : 50) : 0);
-    relevantPcts.push(p.books.done > 0 ? 100 : 0);
-    relevantPcts.push(p.english.done > 0 ? 100 : 0);
-    if (gymToday) relevantPcts.push(p.gym.done > 0 ? 100 : 0);
-    if (ptToday)  relevantPcts.push(p.pentest.done > 0 ? 100 : 0);
-    var overall = Math.round(relevantPcts.reduce(function(a,b){return a+b;},0) / relevantPcts.length);
-
-    cards.push('<div class="pstat"><div class="pstat-val" style="color:' + colOf(overall) + '">' + overall + '%</div><div class="pstat-lbl">Сьогодні</div></div>');
-    cards.push('<div class="pstat"><div class="pstat-val" style="color:var(--steps)">' + (p.steps.done > 0 ? '✓' : '—') + '</div><div class="pstat-lbl">🦵 Кроки</div></div>');
-    if (gymToday) cards.push('<div class="pstat"><div class="pstat-val" style="color:var(--gym)">' + (p.gym.done > 0 ? '✓' : '—') + '</div><div class="pstat-lbl">🏋️ Зал</div></div>');
-    if (ptToday)  cards.push('<div class="pstat"><div class="pstat-val" style="color:var(--pentest)">' + (p.pentest.done > 0 ? '✓' : '—') + '</div><div class="pstat-lbl">🛡️ Пентест</div></div>');
-
-  } else {
-    // Week / Month — show counts
-    var gymPct = p.gym.target ? Math.round(p.gym.done / p.gym.target * 100) : 0;
-    var stepsPct = Math.round(p.steps.done / p.steps.total * 100);
-    var calPct = Math.round(p.cal.ok / p.cal.total * 100);
-    var booksPct = Math.round(p.books.done / p.books.total * 100);
-    var ptPct = p.pentest.target ? Math.round(p.pentest.done / p.pentest.target * 100) : 0;
-    var enPct = Math.round(p.english.done / p.english.total * 100);
-    var overall = Math.round((gymPct + stepsPct + calPct + booksPct + ptPct + enPct) / 6);
-
-    cards.push('<div class="pstat"><div class="pstat-val" style="color:' + colOf(overall) + '">' + overall + '%</div><div class="pstat-lbl">Загальне ' + lbl + '</div></div>');
-    cards.push('<div class="pstat"><div class="pstat-val" style="color:var(--gym)">' + p.gym.done + '/' + p.gym.target + '</div><div class="pstat-lbl">🏋️ Зал ' + lbl + '</div></div>');
-    cards.push('<div class="pstat"><div class="pstat-val" style="color:var(--steps)">' + p.steps.done + '/' + p.steps.total + '</div><div class="pstat-lbl">🦵 Кроки ' + lbl + '</div></div>');
+    // label — show every 5 days
+    var lbl = document.createElement('div');
+    lbl.style.cssText = 'flex:1;text-align:center;font-size:8px;color:var(--muted);';
+    lbl.textContent = (day % 5 === 0 || day === 1) ? day : '';
+    labels.appendChild(lbl);
   }
-
-  el.style.gridTemplateColumns = 'repeat(' + cards.length + ',1fr)';
-  el.innerHTML = cards.join('');
 }
 
 function safeRun(fn, name) {
@@ -1088,7 +1064,7 @@ function safeRun(fn, name) {
 function renderDash() {
   safeRun(renderWeekSummary, 'renderWeekSummary');
   safeRun(renderTodayChecklist, 'renderTodayChecklist');
-  safeRun(renderPeriodSummary, 'renderPeriodSummary');
+  safeRun(renderMonthChart, 'renderMonthChart');
 
   // Radial chart — bars grow from center outward, one bar per goal
   var goals = getGoalProgress();
@@ -1360,6 +1336,9 @@ function delMoney(i) { S.money.log.splice(i, 1); save(); renderMoney(); }
 
 // ===== WEIGHT =====
 function renderWeight() {
+  if (!S.weight) S.weight = { log: {}, cal: {} };
+  if (!S.weight.log) S.weight.log = {};
+  if (!S.weight.cal) S.weight.cal = {};
   var wkeys = Object.keys(S.weight.log).sort();
   var lastKey = wkeys.length ? wkeys[wkeys.length-1] : null;
   var lastW = lastKey ? S.weight.log[lastKey].val : null;
