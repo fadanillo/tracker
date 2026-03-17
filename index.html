@@ -169,6 +169,37 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
 </style>
 </head>
 <body>
+<!-- PIN OVERLAY — shown immediately, hidden only after correct PIN -->
+<div id="pin-overlay" style="display:flex;position:fixed;inset:0;background:#0d0d0d;z-index:9999;flex-direction:column;align-items:center;justify-content:center;gap:20px;">
+  <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#f0f0f0;" id="pin-title">🔒 Введи PIN</div>
+  <div style="font-size:13px;color:#666;" id="pin-sub">Для доступу до трекера</div>
+  <div style="display:flex;gap:12px;margin:8px 0;">
+    <div class="pin-dot"></div><div class="pin-dot"></div>
+    <div class="pin-dot"></div><div class="pin-dot"></div>
+    <div class="pin-dot"></div><div class="pin-dot"></div>
+    <div class="pin-dot"></div><div class="pin-dot"></div>
+  </div>
+  <input id="pin-input" type="password" inputmode="numeric" maxlength="8"
+    style="opacity:0;position:absolute;width:1px;height:1px;"
+    oninput="updateDots(this.value)"
+    onkeydown="if(event.key=='Enter')pinEnter()">
+  <div style="font-size:13px;color:#ff5252;min-height:20px;text-align:center;max-width:260px;" id="pin-err"></div>
+  <div style="display:grid;grid-template-columns:repeat(3,72px);gap:10px;">
+    <button class="pin-btn" onclick="pinKey('1')">1</button>
+    <button class="pin-btn" onclick="pinKey('2')">2</button>
+    <button class="pin-btn" onclick="pinKey('3')">3</button>
+    <button class="pin-btn" onclick="pinKey('4')">4</button>
+    <button class="pin-btn" onclick="pinKey('5')">5</button>
+    <button class="pin-btn" onclick="pinKey('6')">6</button>
+    <button class="pin-btn" onclick="pinKey('7')">7</button>
+    <button class="pin-btn" onclick="pinKey('8')">8</button>
+    <button class="pin-btn" onclick="pinKey('9')">9</button>
+    <button class="pin-btn" onclick="pinKey('del')" style="color:#666;">⌫</button>
+    <button class="pin-btn" onclick="pinKey('0')">0</button>
+    <button class="pin-btn" onclick="pinEnter()" id="pin-confirm" style="background:#ff6b35;color:#000;font-weight:800;">OK</button>
+  </div>
+  <div style="margin-top:8px;font-size:11px;color:#666;" id="pin-hint"></div>
+</div>
 <div class="app">
 <header>
   <div class="logo">цілі<em>.</em>2026</div>
@@ -1795,10 +1826,13 @@ function showPin(isSetup) {
   var overlay = document.getElementById('pin-overlay');
   overlay.style.display = 'flex';
   updatePinUI(isSetup);
-  // focus hidden input for keyboard entry
-  setTimeout(function() { document.getElementById('pin-input').focus(); }, 100);
-  // tapping anywhere on overlay focuses the input
-  overlay.onclick = function() { document.getElementById('pin-input').focus(); };
+  setTimeout(function() {
+    var inp = document.getElementById('pin-input');
+    if (inp) inp.focus();
+  }, 50);
+  overlay.onclick = function(e) {
+    if (e.target === overlay) document.getElementById('pin-input').focus();
+  };
 }
 
 function updatePinUI(isSetup) {
@@ -1906,50 +1940,18 @@ loadState();
 if (!localStorage.getItem(PIN_KEY)) {
   localStorage.setItem(PIN_KEY, '9511');
 }
+// Set PIN immediately
+if (!localStorage.getItem(PIN_KEY)) {
+  localStorage.setItem(PIN_KEY, '9511');
+}
+// Show PIN UI right away (overlay is already visible via CSS)
+loadState();
+updatePinUI(false);
+setTimeout(function() { document.getElementById('pin-input').focus(); }, 50);
+
 initFirebase(function() {
   renderAll();
   renderDash();
-  showPin(false);
 });
-</script>
-<!-- PIN OVERLAY -->
-<div id="pin-overlay" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:9999;flex-direction:column;align-items:center;justify-content:center;gap:20px;">
-  <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;" id="pin-title">🔒 Введи PIN</div>
-  <div style="font-size:13px;color:var(--muted)" id="pin-sub">Для доступу до трекера</div>
-
-  <!-- dots -->
-  <div style="display:flex;gap:12px;margin:8px 0;">
-    <div class="pin-dot"></div><div class="pin-dot"></div>
-    <div class="pin-dot"></div><div class="pin-dot"></div>
-    <div class="pin-dot"></div><div class="pin-dot"></div>
-    <div class="pin-dot"></div><div class="pin-dot"></div>
-  </div>
-
-  <input id="pin-input" type="password" inputmode="numeric" maxlength="8"
-    style="opacity:0;position:absolute;width:1px;height:1px;"
-    oninput="updateDots(this.value)"
-    onkeydown="if(event.key=='Enter')pinEnter()">
-
-  <div style="font-size:13px;color:var(--red);min-height:20px;text-align:center;max-width:260px;" id="pin-err"></div>
-
-  <!-- numpad -->
-  <div style="display:grid;grid-template-columns:repeat(3,72px);gap:10px;">
-    <button class="pin-btn" onclick="pinKey('1')">1</button>
-    <button class="pin-btn" onclick="pinKey('2')">2</button>
-    <button class="pin-btn" onclick="pinKey('3')">3</button>
-    <button class="pin-btn" onclick="pinKey('4')">4</button>
-    <button class="pin-btn" onclick="pinKey('5')">5</button>
-    <button class="pin-btn" onclick="pinKey('6')">6</button>
-    <button class="pin-btn" onclick="pinKey('7')">7</button>
-    <button class="pin-btn" onclick="pinKey('8')">8</button>
-    <button class="pin-btn" onclick="pinKey('9')">9</button>
-    <button class="pin-btn" onclick="pinKey('del')" style="color:var(--muted)">⌫</button>
-    <button class="pin-btn" onclick="pinKey('0')">0</button>
-    <button class="pin-btn" onclick="pinEnter()" id="pin-confirm" style="background:var(--gym);color:#000;font-weight:800;">OK</button>
-  </div>
-
-  <div style="margin-top:8px;font-size:11px;color:var(--muted)" id="pin-hint"></div>
-</div>
-
 </body>
 </html>
