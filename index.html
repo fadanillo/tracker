@@ -40,6 +40,7 @@ var FB_USER = "user1";
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;padding-bottom:80px;}
 body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -20%,rgba(255,107,53,.06),transparent);pointer-events:none;z-index:0;}
 .app{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:22px 14px;}
+#pin-overlay{isolation:isolate;}
 header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid var(--b);}
 .logo{font-family:'Syne',sans-serif;font-size:21px;font-weight:800;letter-spacing:-1px;}
 .logo em{color:var(--gym);font-style:normal;}
@@ -1824,14 +1825,16 @@ function pinKey(k) {
   if (lock.blockedUntil && Date.now() < lock.blockedUntil) return;
   if (k === 'del') {
     pinVal = pinVal.slice(0, -1);
-  } else if (pinVal.length < 4) {
-    pinVal += k;
+    updateDots(pinVal);
+    document.getElementById('pin-err').textContent = '';
+    return;
   }
+  if (pinVal.length >= 4) return; // max 4 digits
+  pinVal += k;
   updateDots(pinVal);
   document.getElementById('pin-err').textContent = '';
-  // auto-submit when 4 digits entered
   if (pinVal.length === 4) {
-    setTimeout(pinEnter, 120);
+    setTimeout(pinEnter, 150); // small delay so last dot fills before check
   }
 }
 
@@ -1899,6 +1902,14 @@ function showPin() {
   document.getElementById('pin-overlay').style.display = 'flex';
   updatePinUI();
 }
+
+// Keyboard support for PIN
+document.addEventListener('keydown', function(e) {
+  if (document.getElementById('pin-overlay').style.display === 'none') return;
+  if (e.key >= '0' && e.key <= '9') pinKey(e.key);
+  else if (e.key === 'Backspace') pinKey('del');
+  else if (e.key === 'Enter') pinEnter();
+});
 
 // ===== INIT =====
 loadState();
