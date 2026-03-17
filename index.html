@@ -44,8 +44,10 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
 .logo{font-family:'Syne',sans-serif;font-size:21px;font-weight:800;letter-spacing:-1px;}
 .logo em{color:var(--gym);font-style:normal;}
 .hdr-date{font-family:'Syne',sans-serif;background:var(--s2);border:1px solid var(--b);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;color:var(--muted);}
-.nav{display:flex;gap:3px;background:var(--s1);padding:4px;border-radius:var(--r);border:1px solid var(--b);margin-bottom:22px;overflow-x:auto;}
-.nav::-webkit-scrollbar{display:none;}
+.nav{display:flex;gap:3px;background:var(--s1);padding:4px;border-radius:var(--r);border:1px solid var(--b);margin-bottom:22px;overflow-x:auto;cursor:grab;}
+.nav::-webkit-scrollbar{height:3px;}
+.nav::-webkit-scrollbar-track{background:transparent;}
+.nav::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px;}
 .ntab{flex-shrink:0;padding:8px 13px;border-radius:9px;border:none;background:none;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;white-space:nowrap;}
 .ntab.on{background:var(--s3);color:var(--text);}
 .ntab:hover:not(.on){color:var(--text);}
@@ -158,6 +160,11 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
 .gname.gx{text-decoration:line-through;color:var(--muted);}
 .gchk{width:32px;height:32px;border:2px solid var(--b);border-radius:9px;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s;flex-shrink:0;}
 .gchk.gd{background:var(--money);border-color:var(--money);color:#000;}
+/* PIN */
+.pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--b2);transition:all .15s;}
+.pin-dot.filled{background:var(--gym);border-color:var(--gym);}
+.pin-btn{width:72px;height:72px;border-radius:16px;border:1.5px solid var(--b);background:var(--s1);color:var(--text);font-family:'Syne',sans-serif;font-size:22px;font-weight:700;cursor:pointer;transition:all .15s;}
+.pin-btn:active{background:var(--s3);transform:scale(.95);}
 @media(max-width:600px){.wqsc{font-size:14px;}}
 </style>
 </head>
@@ -170,9 +177,10 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
     <div class="hdr-date" id="hdr"></div>
   </div>
 </header>
-<div class="nav">
+<div class="nav" id="main-nav">
   <button class="ntab on"  onclick="tab('dash')">📊 Дашборд</button>
   <button class="ntab"     onclick="tab('week')">⭐ Тиждень</button>
+  <button class="ntab"     onclick="tab('monthq')">📅 Місяць</button>
   <button class="ntab"     onclick="tab('gym')">🏋️ Зал</button>
   <button class="ntab"     onclick="tab('bench')">🏆 Жим</button>
   <button class="ntab"     onclick="tab('money')">💳 Фінанси</button>
@@ -246,6 +254,23 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
   <div class="card">
     <div class="stitle" style="margin-bottom:10px">Минулі тижні</div>
     <div id="wq-hist"></div>
+  </div>
+</div>
+
+<!-- MONTH QUALITY -->
+<div class="sec" id="sec-monthq">
+  <div class="card">
+    <div class="card-head"><div class="ci">📅</div><div><div class="ct" id="mq-title">Місяць</div><div class="cs">Якість кожного дня · 🟢≥70% 🟡50–69% 🔴&lt;50%</div></div><div class="cr"><div style="font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:var(--steps)">🔥 <span id="mq-streak">0</span></div></div></div>
+    <div id="mq-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:8px;"></div>
+    <div style="display:flex;gap:4px;margin-top:4px;font-size:10px;color:var(--muted)">
+      <span style="width:10px;height:10px;background:var(--green);border-radius:2px;display:inline-block;margin-right:3px;opacity:.8"></span>≥70%&nbsp;&nbsp;
+      <span style="width:10px;height:10px;background:var(--yellow);border-radius:2px;display:inline-block;margin-right:3px;opacity:.8"></span>50–69%&nbsp;&nbsp;
+      <span style="width:10px;height:10px;background:var(--red);border-radius:2px;display:inline-block;margin-right:3px;opacity:.8"></span>&lt;50%
+    </div>
+  </div>
+  <div class="card">
+    <div class="stitle" style="margin-bottom:10px">Стрік Momentum 🔥</div>
+    <div id="mq-streak-detail" style="font-size:13px;color:var(--muted);line-height:1.8"></div>
   </div>
 </div>
 
@@ -375,8 +400,16 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
       <input class="inp" id="pg-add" type="number" placeholder="Сторінок сьогодні">
       <button class="btn" onclick="addPages()" style="background:var(--books);color:#000">Записати</button>
     </div>
+    <div class="stitle" style="margin-top:4px">Цей тиждень <span style="color:var(--muted);font-weight:400;font-size:11px">(натисни щоб відмітити)</span></div>
     <div class="wlbl"><div class="wl">Нд</div><div class="wl">Пн</div><div class="wl">Вт</div><div class="wl">Ср</div><div class="wl">Чт</div><div class="wl">Пт</div><div class="wl">Сб</div></div>
     <div class="wgrid" id="bk-wk"></div>
+    <div class="hr"></div>
+    <div class="stitle">Додати за інший день</div>
+    <div class="inprow" style="margin-bottom:14px;">
+      <input class="inp" id="pg-date" type="date">
+      <input class="inp" id="pg-past" type="number" placeholder="Сторінок">
+      <button class="btn" onclick="addPagesPast()" style="background:var(--books);color:#000">Записати</button>
+    </div>
     <div class="hr"></div>
     <div class="stitle">Мої книги</div>
     <div id="bk-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;"></div>
@@ -396,7 +429,7 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
       <button class="stbtn" id="st-yes" onclick="setSteps(true)">✓ Виконав 8к+</button>
       <button class="stbtn" id="st-no"  onclick="setSteps(false)">✗ Не виконав</button>
     </div>
-    <div style="margin-top:14px;"><div class="stitle">Цей місяць</div><div class="mgrid" id="st-mo"></div></div>
+    <div style="margin-top:14px;"><div class="stitle">Цей місяць <span style="color:var(--muted);font-weight:400;font-size:11px">(натисни на день щоб відмітити)</span></div><div class="mgrid" id="st-mo"></div></div>
   </div>
 </div>
 
@@ -684,7 +717,7 @@ function getPastWeeks(n) {
 
 // ===== TABS =====
 function tab(name) {
-  var tabs = ['dash','week','gym','bench','money','weight','books','steps','pentest','english','dates','global'];
+  var tabs = ['dash','week','monthq','gym','bench','money','weight','books','steps','pentest','english','dates','global'];
   document.querySelectorAll('.ntab').forEach(function(t, i) {
     t.classList.toggle('on', tabs[i] === name);
   });
@@ -692,6 +725,7 @@ function tab(name) {
   document.getElementById('sec-' + name).classList.add('on');
   if (name === 'dash') renderDash();
   if (name === 'week') renderWeek();
+  if (name === 'monthq') renderMonthQuality();
 }
 
 // ===== DASHBOARD =====
@@ -711,7 +745,7 @@ function getGoalProgress() {
 
   var wkeys = Object.keys(S.weight.log).sort();
   var lastW = wkeys.length ? S.weight.log[wkeys[wkeys.length-1]].val : null;
-  var weightPct = lastW === null ? 0 : Math.min(Math.round(lastW / 80 * 100), 100);
+  var weightPct = lastW === null ? 0 : Math.min(Math.max(Math.round((lastW - 60) / (80 - 60) * 100), 0), 100);
 
   var booksFinished = S.books.books.filter(function(b) { return b.done; }).length;
   var booksPct = Math.min(booksFinished / 6 * 100, 100);
@@ -1167,9 +1201,127 @@ function getDayScore(d) {
   ];
 
   var active = items.filter(function(it) { return it.target; });
-  var doneCount = active.filter(function(it) { return it.done; }).length;
+  var doneCount = 0;
+  active.forEach(function(it) {
+    if (it.key === 'cal') { if (calGreen) doneCount += 1; else if (calYellow) doneCount += 0.5; }
+    else if (it.done) doneCount += 1;
+  });
   var pct = active.length ? Math.round(doneCount / active.length * 100) : 0;
   return { d: d, items: items, pct: pct };
+}
+
+function getMomentumStreak() {
+  var t = today();
+  var streak = 0;
+  var chk = new Date(t + 'T12:00');
+  for (var i = 0; i < 365; i++) {
+    var d = chk.toISOString().split('T')[0];
+    var sc = getDayScore(d);
+    if (d > t) { chk.setDate(chk.getDate() - 1); continue; }
+    if (sc.pct >= 70) { streak++; }
+    else if (sc.pct >= 50) { /* pause — don't increment, don't reset */ }
+    else { break; } // reset
+    chk.setDate(chk.getDate() - 1);
+  }
+  return streak;
+}
+
+function renderMonthChart() {
+  ensureState();
+  var t = today();
+  var y = new Date().getFullYear(), m = new Date().getMonth();
+  var daysInMonth = new Date(y, m+1, 0).getDate();
+  var mns2 = ['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
+  document.getElementById('month-chart-title').textContent = mns2[m] + ' ' + y;
+
+  var chartWrap = document.getElementById('month-chart');
+  var labelsEl = document.getElementById('month-chart-labels');
+  chartWrap.innerHTML = ''; labelsEl.innerHTML = '';
+
+  // wrapper with grid lines
+  var wrap = document.createElement('div');
+  wrap.style.cssText = 'position:relative;height:80px;display:flex;align-items:flex-end;gap:2px;';
+
+  // grid lines at 25%, 50%, 75%, 100%
+  [25,50,75,100].forEach(function(pct) {
+    var line = document.createElement('div');
+    line.style.cssText = 'position:absolute;left:0;right:0;height:1px;background:rgba(255,255,255,0.06);bottom:' + (pct * 0.8) + 'px;';
+    var lbl = document.createElement('span');
+    lbl.style.cssText = 'position:absolute;right:0;font-size:8px;color:var(--muted);bottom:' + (pct * 0.8 + 2) + 'px;';
+    lbl.textContent = pct + '%';
+    wrap.appendChild(line);
+    wrap.appendChild(lbl);
+  });
+
+  for (var day = 1; day <= daysInMonth; day++) {
+    var d = y + '-' + String(m+1).padStart(2,'0') + '-' + String(day).padStart(2,'0');
+    var isFut = d > t;
+    var score = isFut ? null : getDayScore(d).pct;
+    var col = score === null ? 'var(--b)' : score >= 70 ? 'var(--green)' : score >= 50 ? 'var(--yellow)' : 'var(--red)';
+    var h = score === null ? 3 : Math.max(3, score * 0.74);
+
+    var bar = document.createElement('div');
+    bar.style.cssText = 'flex:1;border-radius:3px 3px 0 0;background:' + col + ';height:' + h + 'px;opacity:' + (isFut ? '0.12' : '0.82') + ';cursor:default;';
+    if (score !== null) bar.title = day + ' — ' + score + '%';
+    wrap.appendChild(bar);
+
+    var lbl2 = document.createElement('div');
+    lbl2.style.cssText = 'flex:1;text-align:center;font-size:8px;color:var(--muted);';
+    lbl2.textContent = (day % 5 === 0 || day === 1) ? day : '';
+    labelsEl.appendChild(lbl2);
+  }
+  chartWrap.appendChild(wrap);
+}
+
+function renderMonthQuality() {
+  ensureState();
+  var t = today();
+  var y = new Date().getFullYear(), m = new Date().getMonth();
+  var daysInMonth = new Date(y, m+1, 0).getDate();
+  var mns2 = ['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
+  document.getElementById('mq-title').textContent = mns2[m] + ' ' + y;
+
+  var streak = getMomentumStreak();
+  document.getElementById('mq-streak').textContent = streak;
+
+  // month grid — Sun–Sat header
+  var grid = document.getElementById('mq-grid');
+  grid.innerHTML = '';
+  var DAYS = ['Нд','Пн','Вт','Ср','Чт','Пт','Сб'];
+  DAYS.forEach(function(d) {
+    var h = document.createElement('div');
+    h.style.cssText = 'text-align:center;font-size:9px;color:var(--muted);font-weight:700;padding:3px 0;';
+    h.textContent = d;
+    grid.appendChild(h);
+  });
+
+  // padding before first day
+  var firstDow = new Date(y, m, 1).getDay(); // 0=Sun
+  for (var p2 = 0; p2 < firstDow; p2++) {
+    var emp = document.createElement('div'); emp.style.cssText = 'aspect-ratio:1;';
+    grid.appendChild(emp);
+  }
+
+  for (var day = 1; day <= daysInMonth; day++) {
+    var d = y + '-' + String(m+1).padStart(2,'0') + '-' + String(day).padStart(2,'0');
+    var isFut = d > t, isT = d === t;
+    var sc = isFut ? null : getDayScore(d);
+    var pct = sc ? sc.pct : null;
+    var col = pct === null ? 'transparent' : pct >= 70 ? 'rgba(38,222,129,.25)' : pct >= 50 ? 'rgba(255,211,42,.2)' : 'rgba(255,82,82,.2)';
+    var border = isT ? 'var(--b2)' : 'var(--b)';
+
+    var cell = document.createElement('div');
+    cell.style.cssText = 'aspect-ratio:1;border-radius:8px;border:1px solid ' + border + ';background:' + col + ';display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;font-weight:700;' + (isFut ? 'opacity:.3;' : '') + 'cursor:default;';
+    cell.innerHTML = '<span>' + day + '</span>' + (pct !== null ? '<span style="font-size:8px;color:var(--muted);margin-top:1px">' + pct + '%</span>' : '');
+    grid.appendChild(cell);
+  }
+
+  // streak detail
+  var sd = document.getElementById('mq-streak-detail');
+  sd.innerHTML = '<b style="color:var(--text)">🔥 Momentum Streak: ' + streak + ' днів</b><br><br>' +
+    '<span style="color:var(--green)">≥70%</span> — стрік росте<br>' +
+    '<span style="color:var(--yellow)">50–69%</span> — стрік на паузі<br>' +
+    '<span style="color:var(--red)">&lt;50%</span> — стрік скидається';
 }
 
 function renderWeek() {
@@ -1382,6 +1534,11 @@ function renderBooks() {
     if (done) btn.style.background = 'rgba(247,183,49,.18)';
     var p = S.books.pages[d] || 0;
     btn.innerHTML = done ? '<span class="ck">✓</span>' : '<span class="dn" style="font-size:9px">' + (p || '') + '</span>';
+    if (!isFut) (function(dd) { btn.onclick = function() {
+      if ((S.books.pages[dd] || 0) >= 20) { delete S.books.pages[dd]; }
+      else { S.books.pages[dd] = 20; }
+      save(); renderBooks();
+    }; })(d);
     wg.appendChild(btn);
   });
   var tp = S.books.pages[today()] || 0;
@@ -1412,6 +1569,15 @@ function addPages() {
   var t = today(); S.books.pages[t] = (S.books.pages[t] || 0) + p; save();
   document.getElementById('pg-add').value = ''; renderBooks();
   if (document.getElementById('sec-week').classList.contains('on')) renderWeek();
+}
+function addPagesPast() {
+  var d = document.getElementById('pg-date').value;
+  var p = parseInt(document.getElementById('pg-past').value) || 0;
+  if (!d || !p) return;
+  S.books.pages[d] = (S.books.pages[d] || 0) + p; save();
+  document.getElementById('pg-date').value = '';
+  document.getElementById('pg-past').value = '';
+  renderBooks();
 }
 function addBook() {
   var title = document.getElementById('bk-title').value.trim();
@@ -1448,6 +1614,15 @@ function renderSteps() {
     if (isDone) c.style.background = 'rgba(85,239,196,.2)';
     if (isFail) c.style.background = 'rgba(255,82,82,.1)';
     c.textContent = new Date(d+'T12:00').getDate();
+    if (!isFut) (function(dd) { c.onclick = function() {
+      // cycle: undefined → true → false → undefined
+      var cur = log[dd];
+      if (cur === undefined || cur === null) { log[dd] = true; }
+      else if (cur === true) { log[dd] = false; }
+      else { delete log[dd]; }
+      save(); renderSteps();
+      if (document.getElementById('sec-dash').classList.contains('on')) renderDash();
+    }; })(d);
     mg.appendChild(c);
   });
 }
@@ -1591,12 +1766,192 @@ function renderDashIfOpen() {
   if (document.getElementById('sec-dash').classList.contains('on')) renderDash();
 }
 
+// Nav drag scroll
+(function() {
+  var nav = document.getElementById('main-nav');
+  if (!nav) return;
+  var isDown = false, startX, scrollLeft;
+  nav.addEventListener('mousedown', function(e) { isDown = true; nav.style.cursor = 'grabbing'; startX = e.pageX - nav.offsetLeft; scrollLeft = nav.scrollLeft; });
+  nav.addEventListener('mouseleave', function() { isDown = false; nav.style.cursor = 'grab'; });
+  nav.addEventListener('mouseup', function() { isDown = false; nav.style.cursor = 'grab'; });
+  nav.addEventListener('mousemove', function(e) { if (!isDown) return; e.preventDefault(); var x = e.pageX - nav.offsetLeft; nav.scrollLeft = scrollLeft - (x - startX); });
+  nav.addEventListener('wheel', function(e) { e.preventDefault(); nav.scrollLeft += e.deltaY; }, { passive: false });
+})();
+
+// ===== PIN LOCK =====
+var PIN_KEY = 'tracker_pin';
+var LOCK_KEY = 'tracker_lock';
+var pinUnlocked = false;
+
+function getLockData() {
+  try { return JSON.parse(sessionStorage.getItem(LOCK_KEY) || '{}'); } catch(e) { return {}; }
+}
+function setLockData(d) { sessionStorage.setItem(LOCK_KEY, JSON.stringify(d)); }
+
+function getBlockSeconds(attempts) {
+  // after 5 fails: 60s, then each fail doubles: 120, 240, 480...
+  if (attempts < 5) return 0;
+  var extra = attempts - 5;
+  return 60 * Math.pow(2, extra);
+}
+
+function showPin(isSetup) {
+  var overlay = document.getElementById('pin-overlay');
+  overlay.style.display = 'flex';
+  updatePinUI(isSetup);
+  // focus hidden input for keyboard entry
+  setTimeout(function() { document.getElementById('pin-input').focus(); }, 100);
+  // tapping anywhere on overlay focuses the input
+  overlay.onclick = function() { document.getElementById('pin-input').focus(); };
+}
+
+function updatePinUI(isSetup) {
+  var lock = getLockData();
+  var title = document.getElementById('pin-title');
+  var sub = document.getElementById('pin-sub');
+  var err = document.getElementById('pin-err');
+  var dots = document.querySelectorAll('.pin-dot');
+  dots.forEach(function(d) { d.classList.remove('filled'); });
+  document.getElementById('pin-input').value = '';
+
+  if (isSetup) {
+    title.textContent = '🔐 Встанови PIN';
+    sub.textContent = 'Мінімум 4 цифри';
+  } else {
+    title.textContent = '🔒 Введи PIN';
+    sub.textContent = 'Для доступу до трекера';
+  }
+
+  // Check if blocked
+  if (lock.blockedUntil && Date.now() < lock.blockedUntil) {
+    var secs = Math.ceil((lock.blockedUntil - Date.now()) / 1000);
+    err.textContent = '⏳ Заблоковано на ' + secs + 'с';
+    document.getElementById('pin-input').disabled = true;
+    document.getElementById('pin-confirm').disabled = true;
+    var t = setInterval(function() {
+      var rem = Math.ceil((lock.blockedUntil - Date.now()) / 1000);
+      if (rem <= 0) {
+        clearInterval(t);
+        err.textContent = '';
+        document.getElementById('pin-input').disabled = false;
+        document.getElementById('pin-confirm').disabled = false;
+        err.textContent = '';
+      } else {
+        err.textContent = '⏳ Заблоковано на ' + rem + 'с';
+      }
+    }, 500);
+  }
+}
+
+function checkPin() {
+  var lock = getLockData();
+  if (lock.blockedUntil && Date.now() < lock.blockedUntil) return;
+
+  var val = document.getElementById('pin-input').value.trim();
+  var stored = localStorage.getItem(PIN_KEY);
+  var err = document.getElementById('pin-err');
+
+  if (val === stored) {
+    lock.attempts = 0;
+    lock.blockedUntil = null;
+    setLockData(lock);
+    pinUnlocked = true;
+    document.getElementById('pin-overlay').style.display = 'none';
+    return;
+  }
+
+  lock.attempts = (lock.attempts || 0) + 1;
+  var blockSecs = getBlockSeconds(lock.attempts);
+  if (blockSecs > 0) {
+    lock.blockedUntil = Date.now() + blockSecs * 1000;
+    var mins = blockSecs >= 60 ? Math.round(blockSecs/60) + ' хв' : blockSecs + 'с';
+    err.textContent = '⛔ Невірний PIN. Заблоковано на ' + mins;
+  } else {
+    var left = 5 - lock.attempts;
+    err.textContent = '❌ Невірний PIN. Залишилось спроб: ' + left;
+  }
+  setLockData(lock);
+  document.getElementById('pin-input').value = '';
+  updateDots('');
+  updatePinUI(false);
+}
+
+function setupPin() {
+  var val = document.getElementById('pin-input').value.trim();
+  var err = document.getElementById('pin-err');
+  if (val.length < 4) { err.textContent = 'Мінімум 4 цифри'; return; }
+  if (!/^\d+$/.test(val)) { err.textContent = 'Тільки цифри'; return; }
+  localStorage.setItem(PIN_KEY, val);
+  pinUnlocked = true;
+  document.getElementById('pin-overlay').style.display = 'none';
+}
+
+function updateDots(val) {
+  var dots = document.querySelectorAll('.pin-dot');
+  dots.forEach(function(d, i) { d.classList.toggle('filled', i < val.length); });
+}
+
+function pinKey(k) {
+  var inp = document.getElementById('pin-input');
+  if (k === 'del') { inp.value = inp.value.slice(0,-1); }
+  else if (inp.value.length < 8) { inp.value += k; }
+  updateDots(inp.value);
+  if (inp.value.length >= 4 && !localStorage.getItem(PIN_KEY)) { /* wait for confirm */ }
+}
+
+function pinEnter() {
+  var stored = localStorage.getItem(PIN_KEY);
+  if (stored) { checkPin(); } else { setupPin(); }
+}
+
 // ===== INIT =====
 loadState();
 initFirebase(function() {
   renderAll();
   renderDash();
+  // Show PIN after app loads
+  var stored = localStorage.getItem(PIN_KEY);
+  if (stored) { showPin(false); } else { showPin(true); }
 });
 </script>
+<!-- PIN OVERLAY -->
+<div id="pin-overlay" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:9999;flex-direction:column;align-items:center;justify-content:center;gap:20px;">
+  <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;" id="pin-title">🔒 Введи PIN</div>
+  <div style="font-size:13px;color:var(--muted)" id="pin-sub">Для доступу до трекера</div>
+
+  <!-- dots -->
+  <div style="display:flex;gap:12px;margin:8px 0;">
+    <div class="pin-dot"></div><div class="pin-dot"></div>
+    <div class="pin-dot"></div><div class="pin-dot"></div>
+    <div class="pin-dot"></div><div class="pin-dot"></div>
+    <div class="pin-dot"></div><div class="pin-dot"></div>
+  </div>
+
+  <input id="pin-input" type="password" inputmode="numeric" maxlength="8"
+    style="opacity:0;position:absolute;width:1px;height:1px;"
+    oninput="updateDots(this.value)"
+    onkeydown="if(event.key=='Enter')pinEnter()">
+
+  <div style="font-size:13px;color:var(--red);min-height:20px;text-align:center;max-width:260px;" id="pin-err"></div>
+
+  <!-- numpad -->
+  <div style="display:grid;grid-template-columns:repeat(3,72px);gap:10px;">
+    <button class="pin-btn" onclick="pinKey('1')">1</button>
+    <button class="pin-btn" onclick="pinKey('2')">2</button>
+    <button class="pin-btn" onclick="pinKey('3')">3</button>
+    <button class="pin-btn" onclick="pinKey('4')">4</button>
+    <button class="pin-btn" onclick="pinKey('5')">5</button>
+    <button class="pin-btn" onclick="pinKey('6')">6</button>
+    <button class="pin-btn" onclick="pinKey('7')">7</button>
+    <button class="pin-btn" onclick="pinKey('8')">8</button>
+    <button class="pin-btn" onclick="pinKey('9')">9</button>
+    <button class="pin-btn" onclick="pinKey('del')" style="color:var(--muted)">⌫</button>
+    <button class="pin-btn" onclick="pinKey('0')">0</button>
+    <button class="pin-btn" onclick="pinEnter()" id="pin-confirm" style="background:var(--gym);color:#000;font-weight:800;">OK</button>
+  </div>
+
+  <div style="margin-top:8px;font-size:11px;color:var(--muted)" id="pin-hint"></div>
+</div>
+
 </body>
 </html>
