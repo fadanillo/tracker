@@ -19,6 +19,7 @@ var FIREBASE_CONFIG = {
   messagingSenderId: "107641703547",
   appId:             "1:107641703547:web:1e3d4beb579ec96802e6de"
 };
+
 // User ID — can be any string, just keep it the same on all devices
 var FB_USER = "user1";
 </script>
@@ -35,12 +36,49 @@ var FB_USER = "user1";
   --dates:#fd79a8; --steps:#55efc4; --pentest:#e17055;
   --global:#a29bfe; --r:12px;
   --red:#ff5252; --yellow:#ffd32a; --green:#26de81;
+  --shadow:rgba(0,0,0,.4);
+}
+[data-theme="light"] {
+  --bg:#f5f5f0; --s1:#ffffff; --s2:#f0f0ea; --s3:#e8e8e0;
+  --b:#ddddd5; --b2:#c8c8c0;
+  --text:#1a1a1a; --muted:#888;
+  --shadow:rgba(0,0,0,.12);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;padding-bottom:80px;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;padding-bottom:80px;transition:background .3s,color .3s;}
 body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -20%,rgba(255,107,53,.06),transparent);pointer-events:none;z-index:0;}
 .app{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:22px 14px;}
 #pin-overlay{isolation:isolate;}
+
+/* THEME TOGGLE */
+.theme-btn{background:var(--s2);border:1px solid var(--b);border-radius:20px;padding:5px 12px;cursor:pointer;font-size:16px;transition:all .2s;display:flex;align-items:center;gap:6px;color:var(--text);}
+.theme-btn:hover{border-color:var(--b2);}
+
+/* STREAK FIRE on dashboard */
+.streak-fire{display:inline-flex;align-items:center;gap:6px;font-family:'Syne',sans-serif;font-weight:800;font-size:20px;}
+.fire-icon{display:inline-block;font-size:26px;line-height:1;}
+.fire-icon.alive{animation:fireAlive 1.4s ease-in-out infinite alternate;}
+.fire-icon.dead{filter:grayscale(1);opacity:.4;animation:none;}
+.fire-icon.newstreak{animation:fireNew .6s cubic-bezier(.36,.07,.19,.97) both;}
+@keyframes fireAlive{0%{transform:scale(1) rotate(-3deg);}50%{transform:scale(1.12) rotate(3deg);}100%{transform:scale(1.05) rotate(-1deg);}}
+@keyframes fireNew{0%{transform:scale(1);}20%{transform:scale(1.5) rotate(-8deg);}50%{transform:scale(1.3) rotate(6deg);}70%{transform:scale(1.15) rotate(-3deg);}100%{transform:scale(1);}}
+
+/* CHECK ANIMATION */
+@keyframes checkPop{0%{transform:scale(0.5);opacity:0;}60%{transform:scale(1.2);}100%{transform:scale(1);opacity:1;}}
+@keyframes uncheckFade{0%{transform:scale(1);}100%{transform:scale(0.8);opacity:0;}}
+@keyframes rowComplete{0%{transform:translateX(0);}15%{transform:translateX(6px);}30%{transform:translateX(-4px);}45%{transform:translateX(3px);}100%{transform:translateX(0);}}
+@keyframes progressGrow{from{opacity:.6;}to{opacity:1;}}
+.chk-anim{animation:checkPop .3s cubic-bezier(.36,.07,.19,.97) both;}
+.row-anim{animation:rowComplete .4s ease both;}
+
+/* HAPTIC visual flash */
+@keyframes tapFlash{0%{opacity:1;}50%{opacity:.7;}100%{opacity:1;}}
+.tap-flash{animation:tapFlash .15s ease;}
+
+/* CONFETTI particle */
+.confetti-wrap{position:fixed;inset:0;pointer-events:none;z-index:8888;overflow:hidden;}
+@keyframes confettiFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1;}100%{transform:translateY(100vh) rotate(720deg);opacity:0;}}
+.cp{position:absolute;width:8px;height:8px;border-radius:2px;animation:confettiFall linear forwards;}
 header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid var(--b);}
 .logo{font-family:'Syne',sans-serif;font-size:21px;font-weight:800;letter-spacing:-1px;}
 .logo em{color:var(--gym);font-style:normal;}
@@ -301,6 +339,11 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
 <header>
   <div class="logo">цілі<em>.</em>2026</div>
   <div style="display:flex;align-items:center;gap:10px;">
+    <div id="hdr-streak" class="streak-fire" style="cursor:pointer;" onclick="tab('monthq')" title="Momentum Streak">
+      <span class="fire-icon" id="fire-icon">🔥</span>
+      <span id="fire-count" style="font-size:16px;">0</span>
+    </div>
+    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Тема">🌙</button>
     <div id="sync-status" style="font-size:11px;color:var(--muted)">...</div>
     <div class="hdr-date" id="hdr"></div>
   </div>
@@ -1133,8 +1176,9 @@ function renderTodayChecklist() {
     }
     div.setAttribute('data-chk', it.key);
     div.style.cursor = 'pointer';
+    var boxClass = 'chk-box' + (isDone ? ' chk-anim' : '');
     div.innerHTML =
-      '<div class="chk-box" style="' + boxStyle + '">' + boxContent + '</div>' +
+      '<div class="' + boxClass + '" style="' + boxStyle + '">' + boxContent + '</div>' +
       '<div style="flex:1"><div class="chk-label">' + it.icon + ' ' + it.label + '</div>' +
       '<div class="chk-sub">' + it.sub + '</div></div>';
     cl.appendChild(div);
@@ -1142,8 +1186,8 @@ function renderTodayChecklist() {
 }
 
 function handleChkClick(key) {
+  haptic('light');
   var t = today();
-  var dow = new Date(t + 'T12:00').getDay();
   if (key === 'gym') {
     S.gym.log[t] = !S.gym.log[t];
     if (!S.gym.log[t]) delete S.gym.log[t];
@@ -1169,11 +1213,25 @@ function handleChkClick(key) {
     if (!S.english.log[t]) delete S.english.log[t];
     save(); renderEnglish(); renderTodayChecklist(); renderDashIfOpen();
   }
+  // check if 100% after action
+  setTimeout(function() {
+    var scoreEl = document.getElementById('today-score');
+    if (scoreEl && scoreEl.textContent === '100%') {
+      haptic('success');
+      confetti();
+    }
+    updateStreakFire();
+  }, 50);
 }
 
 document.addEventListener('click', function(e) {
   var el = e.target.closest('[data-chk]');
-  if (el) handleChkClick(el.getAttribute('data-chk'));
+  if (el) {
+    // animate the row
+    el.classList.add('row-anim');
+    setTimeout(function() { el.classList.remove('row-anim'); }, 400);
+    handleChkClick(el.getAttribute('data-chk'));
+  }
 });
 
 function safeRun(fn, name) {
@@ -1182,6 +1240,7 @@ function safeRun(fn, name) {
 
 function renderDash() {
   safeRun(renderWeekSummary, 'renderWeekSummary');
+  safeRun(updateStreakFire, 'updateStreakFire');
   safeRun(renderTodayChecklist, 'renderTodayChecklist');
   safeRun(renderMonthChart, 'renderMonthChart');
 
@@ -1884,6 +1943,77 @@ function renderGlobal() {
 function toggleGlobal(id) {
   var g = S.global.find(function(x) { return x.id === id; });
   if (g) { g.done = !g.done; save(); renderGlobal(); renderDashIfOpen(); }
+}
+
+// ===== HAPTIC =====
+function haptic(type) {
+  if (!navigator.vibrate) return;
+  if (type === 'light') navigator.vibrate(10);
+  else if (type === 'success') navigator.vibrate([15, 50, 30]);
+  else if (type === 'error') navigator.vibrate([30, 40, 30, 40, 60]);
+}
+
+// ===== CONFETTI =====
+function confetti() {
+  var wrap = document.createElement('div');
+  wrap.className = 'confetti-wrap';
+  document.body.appendChild(wrap);
+  var colors = ['#ff6b35','#26de81','#f7b731','#45aaf2','#fd79a8','#a29bfe','#55efc4'];
+  for (var i = 0; i < 38; i++) {
+    var p = document.createElement('div');
+    p.className = 'cp';
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.top = '-10px';
+    p.style.background = colors[Math.floor(Math.random() * colors.length)];
+    p.style.animationDuration = (0.9 + Math.random() * 1.2) + 's';
+    p.style.animationDelay = (Math.random() * 0.5) + 's';
+    p.style.width = p.style.height = (6 + Math.random() * 8) + 'px';
+    wrap.appendChild(p);
+  }
+  setTimeout(function() { document.body.removeChild(wrap); }, 2500);
+}
+
+// ===== THEME =====
+function toggleTheme() {
+  var isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+  document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('theme-btn').textContent = isDark ? '🌙' : '☀️';
+  localStorage.setItem('theme', isDark ? 'light' : 'dark');
+  haptic('light');
+}
+(function initTheme() {
+  var saved = localStorage.getItem('theme') || 'dark';
+  if (saved === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+    var btn = document.getElementById('theme-btn');
+    if (btn) btn.textContent = '☀️';
+  }
+})();
+
+// ===== STREAK FIRE =====
+var lastStreakVal = -1;
+function updateStreakFire() {
+  var streak = getMomentumStreak();
+  var fire = document.getElementById('fire-icon');
+  var count = document.getElementById('fire-count');
+  if (!fire || !count) return;
+  count.textContent = streak;
+  if (streak === 0) {
+    fire.className = 'fire-icon dead';
+    fire.textContent = '🔥';
+    count.style.color = 'var(--muted)';
+  } else if (streak > lastStreakVal && lastStreakVal >= 0) {
+    // streak just increased — celebrate
+    fire.className = 'fire-icon newstreak';
+    fire.textContent = '🔥';
+    count.style.color = 'var(--gym)';
+    setTimeout(function() { fire.className = 'fire-icon alive'; }, 700);
+  } else {
+    fire.className = 'fire-icon alive';
+    fire.textContent = '🔥';
+    count.style.color = 'var(--gym)';
+  }
+  lastStreakVal = streak;
 }
 
 function renderDashIfOpen() {
