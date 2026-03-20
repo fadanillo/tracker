@@ -2,8 +2,17 @@
 <html lang="uk">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Мої цілі 2026</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Цілі 2026</title>
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0d0d0d" id="theme-color-meta">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Цілі">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <!-- ======================================================
@@ -19,7 +28,6 @@ var FIREBASE_CONFIG = {
   messagingSenderId: "107641703547",
   appId:             "1:107641703547:web:1e3d4beb579ec96802e6de"
 };
-
 // User ID — can be any string, just keep it the same on all devices
 var FB_USER = "user1";
 </script>
@@ -737,38 +745,37 @@ function initFirebase(onReady) {
     fbDb = firebase.database();
     fbRef = fbDb.ref('trackers/' + FB_USER);
 
-    var hasLocal = !!localStorage.getItem('g26v3');
+    // Always try to load from Firebase first
+    showSyncStatus('saving', '...');
+    fbRef.once('value', function(snapshot) {
+      var remote = snapshot.val();
+      var hasLocal = !!localStorage.getItem('g26v3');
 
-    if (!hasLocal) {
-      showSyncStatus('saving', 'Завантаження...');
-      fbRef.once('value', function(snapshot) {
-        var remote = snapshot.val();
-        if (remote) {
-          try {
-            var def = defaultState();
-            var keys = ['gym','bench','money','weight','books','steps','pentest','english','dates','global'];
-            keys.forEach(function(k) { S[k] = remote[k] || def[k]; });
-            if (!S.weight.cal) S.weight.cal = {};
-            if (!S.global) S.global = def.global;
-            localStorage.setItem('g26v3', JSON.stringify(S));
-            showSyncStatus('synced', 'Завантажено ✓');
-          } catch(e) { showSyncStatus('local', 'Локально'); }
-        } else {
+      if (remote && !hasLocal) {
+        // No local data — use Firebase
+        try {
+          var def = defaultState();
+          var keys = ['gym','bench','money','weight','books','steps','pentest','english','dates','global'];
+          keys.forEach(function(k) { S[k] = remote[k] || def[k]; });
+          if (!S.weight.cal) S.weight.cal = {};
+          if (!S.global) S.global = def.global;
+          localStorage.setItem('g26v3', JSON.stringify(S));
           showSyncStatus('synced', '✓');
-        }
-        fbReady = true;
-        onReady();
-      }, function() {
-        showSyncStatus('local', 'Помилка Firebase');
-        fbReady = true;
-        onReady();
-      });
-    } else {
+        } catch(e) { showSyncStatus('local', 'Локально'); }
+      } else if (hasLocal) {
+        // Have local — push to Firebase to keep in sync
+        fbRef.set(JSON.parse(JSON.stringify(S)));
+        showSyncStatus('synced', '✓');
+      } else {
+        showSyncStatus('synced', '✓');
+      }
       fbReady = true;
-      showSyncStatus('synced', '✓');
-      fbRef.set(JSON.parse(JSON.stringify(S)));
       onReady();
-    }
+    }, function(err) {
+      showSyncStatus('local', 'Локально');
+      fbReady = true;
+      onReady();
+    });
   } catch(e) {
     showSyncStatus('local', 'Локально');
     onReady();
@@ -1317,9 +1324,7 @@ function renderDash() {
     dg.appendChild(div);
   });
 
-  document.getElementById('dash-subtitle').textContent =
-    curPeriod === 'day' ? 'Статус на сьогодні' :
-    curPeriod === 'week' ? 'Статус за цей тиждень' : 'Статус за цей місяць';
+  document.getElementById('dash-subtitle').textContent = 'Прогрес на ' + new Date().getFullYear();
 }
 
 // ===== WEEK QUALITY =====
@@ -2038,6 +2043,15 @@ initFirebase(function() {
   renderAll();
   renderDash();
 });
+
+// ===== SERVICE WORKER =====
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('sw.js')
+      .then(function(reg) { console.log('SW registered'); })
+      .catch(function(e) { console.log('SW failed:', e); });
+  });
+}
 </script>
 </body>
 </html>
