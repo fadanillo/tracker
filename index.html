@@ -28,6 +28,7 @@ var FIREBASE_CONFIG = {
   messagingSenderId: "107641703547",
   appId:             "1:107641703547:web:1e3d4beb579ec96802e6de"
 };
+
 // User ID — can be any string, just keep it the same on all devices
 var FB_USER = "user1";
 </script>
@@ -568,6 +569,15 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
       </button>
     </div>
     <div style="margin-top:8px;font-size:13px;color:var(--muted)" id="cal-st"></div>
+    <div class="hr"></div>
+    <div class="stitle">Калорії за інший день</div>
+    <div class="inprow" style="margin-bottom:4px;">
+      <input class="inp" id="cal-past-date" type="date">
+      <button class="calbtn" id="cal-past-r" onclick="setCalPast('r')" style="flex:0;padding:8px 10px;">🔴</button>
+      <button class="calbtn" id="cal-past-y" onclick="setCalPast('y')" style="flex:0;padding:8px 10px;">🟡</button>
+      <button class="calbtn" id="cal-past-g" onclick="setCalPast('g')" style="flex:0;padding:8px 10px;">🟢</button>
+    </div>
+    <div id="cal-past-status" style="font-size:12px;color:var(--muted);margin-top:4px;"></div>
     <div class="hr"></div>
     <div class="stitle">Записати вагу</div>
     <div class="inprow">
@@ -1569,7 +1579,7 @@ function renderGym() {
   var gymTgt = [1,3,5,6];
   var wg = document.getElementById('gym-wk'); wg.innerHTML = '';
   week.forEach(function(d, i) {
-    var isTgt = gymTgt.indexOf(i+1) >= 0, isDone = !!log[d], isFut = d > t;
+    var isTgt = [1,3,5,6].indexOf(new Date(d+'T12:00').getDay()) >= 0, isDone = !!log[d], isFut = d > t;
     var btn = document.createElement('button');
     btn.className = 'db' + (isTgt ? ' tgt' : '') + (isDone ? ' done' : '') + (isFut ? ' fut' : '');
     if (isDone) btn.style.background = 'rgba(255,107,53,.18)';
@@ -1702,6 +1712,17 @@ function renderWeight() {
 function setCal(c) {
   S.weight.cal[today()] = c; save(); renderWeight();
   if (document.getElementById('sec-week').classList.contains('on')) renderWeek();
+}
+function setCalPast(c) {
+  var d = document.getElementById('cal-past-date').value;
+  if (!d) { document.getElementById('cal-past-status').textContent = 'Вибери дату'; return; }
+  if (d > today()) { document.getElementById('cal-past-status').textContent = 'Не можна вибрати майбутню дату'; return; }
+  S.weight.cal[d] = c; save();
+  var labels = { r: '🔴 <2400', y: '🟡 2400–2600', g: '🟢 2600+' };
+  var fmtd = fmt(d);
+  document.getElementById('cal-past-status').textContent = '✓ ' + fmtd + ': ' + labels[c];
+  if (document.getElementById('sec-week').classList.contains('on')) renderWeek();
+  renderDashIfOpen();
 }
 function addWeight() {
   var val = parseFloat(document.getElementById('w-val').value);
