@@ -715,12 +715,7 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
 
 <script>
 var S;
-function today() {
-  var d = new Date();
-  return d.getFullYear() + '-' +
-    String(d.getMonth() + 1).padStart(2, '0') + '-' +
-    String(d.getDate()).padStart(2, '0');
-}
+function today() { return new Date().toISOString().split('T')[0]; }
 function fmt(d) { var p = d.split('-'); return p[2]+'.'+p[1]+'.'+p[0]; }
 
 function defaultState() {
